@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- Favicon -->
+  <link href="/stylesheets/image/Bee.jpg" rel="shortcut icon" type="image/ico" />
+  <title>Community Car Rentals</title>
+  <!-- we need to careful the link CDN may change its version and cause some code cannot work properly -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.9/vue.js"></script>
+  <link rel="stylesheet" type="text/css"
+    href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="/stylesheets/productDetail.css">
+
+
+  <script>
+    function Delete(e) {
+      let items = [];
+      JSON.parse(localStorage.getItem('items')).map(data => {
+        if (data.productId != e.parentElement.parentElement.children[0].textContent) {
+
+          items.push(data);
+
+        }
+        else {
+          if (data.number - 1 != 0) {
+            data.number = data.number - 1;
+            items.push(data);
+          }
+        }
+      });
+      localStorage.setItem('items', JSON.stringify(items));
+      window.location.reload();
+    };
+  </script>
+
+</head>
+
+<body class="d-flex flex-column vh-100">
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/home">Community Car Rentals</a>
+
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav w-100">
+          <a class="nav-link " href="/home">Home</a>
+          
+          <% if(currentUser) {%>
+          <a class="nav-link" href="/products/new">List-A-Car</a>
+          <% } %>
+          <a class="nav-link" href="/products">Rent-A-Car</a>
+        </div>
+        <div class="navbar-nav ml-auto">
+          <% if(!currentUser) {%>
+
+          <a class="nav-link" href="/login">Login</a>
+          <a class="nav-link" href="/register">Register</a>
+          <% } else { %>
+          <p id="cartNum" style="color: aquamarine;">0</p>
+          <i class="iconShopping fa fa-shopping-cart fa-2x fa-fw" style="color: aquamarine;"></i>
+          <a class="nav-link" href="/profile">Profile</a>
+          <a id="logout" class="nav-link" href="/logout">Logout</a>
+          <% } %>
+          <a class="nav-link" href="/about">About</a>
+        </div>
+
+
+      </div>
+    </div>
+  </nav>
+  <main class="container mt-5">
+    <div id="content" class="row">
+      <div class="col-6 ">
+
+        <img :src="productList.product_photo" class="d-block w-100" alt="">
+
+      </div>
+      <div class="col-6 ">
+        <div class="card mb-3">
+
+          <div class="card-body">
+            <h5 class="card-title">{{productList.productName}}</h5>
+            <p class="card-text"> {{productList.descript}} </p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item text-muted">Sold by {{productList.seller.userName}} </li>
+            <li class="list-group-item">Price: $ {{productList.price}}</li>
+            <li class="list-group-item">Appearance: {{productList.look_like}}</li>
+            <li class="list-group-item">Remain: {{productList.numberOfProduct}} piece(s)</li>
+            <li class="list-group-item">Bought At: {{productList.boughtDate}}</li>
+            <% if(currentUser) {%>
+            <li class="list-group-item">
+              <button class="addToCart" @click="add();"> Add To Cart </button>
+            </li>
+            <% } %>
+
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="cont" class="cartBox">
+      <div class="cart">
+        <i class="fa fa-close"></i>
+        <h1>Cart</h1>
+        <h3 class="mb-0">Things to Buy</h3>
+        <div class="container">
+          <div style="background-color: rgba(99, 111, 216, 0.5)" class="row">
+            <div class="col-sm">
+              Name
+            </div>
+            <div class="col-sm">
+              Price
+            </div>
+            <div class="col-sm">
+              Number
+            </div>
+            <div class="col-sm">
+              Cancel
+            </div>
+          </div>
+        </div>
+        <div id="showItem" class="container"></div>
+        <div id="total" style="float:right"> Total Price: $ 0</div>
+        <button class="btn btn-info" style="float:right" @click="pay();"> Buy Them All</button>
+      </div>
+    </div>
+
+
+  </main>
+
+  <footer class="footer bg-dark py-3 mt-auto">
+    <div class="container">
+      <span class="text-muted">&copf; Bhumi, Gopi & Vibhav 2022 </span>
+    </div>
+  </footer>
+
+  <script type="application/javascript">
+    const currentURL = window.location.pathname
+
+    const product_id = currentURL.split('/')[3]
+
+    const va = new Vue({
+      el: '#content',
+      data: {
+        errorMsg: '',
+        isEditing: {},
+        productList: []
+      },
+      created() {
+        this.load();
+      },
+      methods: {
+        load() {
+          fetch('/graphql', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              query: `
+                query {
+                  product(productId:"`+ product_id + `") {
+                        productName
+                        productId
+                        price
+                        product_photo
+                        look_like
+                        numberOfProduct
+                        boughtDate
+                        descript
+                        seller {
+                          userName
+                        }
+                    }
+                }
+                `
+            })
+          })
+            .then(async r => {
+              if (!r.ok) throw new Error(await r.text());
+              return r;
+            })
+            .then(r => r.json())
+            .then(r => (this.productList = r.data.product))
+            .catch(this.flash)
+        },
+        add() {
+          let items = [];
+          let item = {
+            productName: this.productList.productName,
+            productId: this.productList.productId,
+            price: this.productList.price,
+            sellerName: this.productList.seller.userName,
+            number: 1
+          };
+
+          if (JSON.parse(localStorage.getItem('items')) === null) {
+            items.push(item);
+            localStorage.setItem("items", JSON.stringify(items));
+            window.location.reload();
+          } else {
+            const localItems = JSON.parse(localStorage.getItem("items"));
+            localItems.map(data => {
+              if (item.productId == data.productId) {
+                //  our puchase number cannot exceed the sell number
+                if (data.number < this.productList.numberOfProduct) {
+                  item.number = data.number + 1;
+                }
+                else {
+                  item.number = data.number
+                }
+              } else {
+                items.push(data);
+              }
+            });
+            items.push(item);
+            localStorage.setItem('items', JSON.stringify(items));
+            window.location.reload();
+          }
+        }
+      }
+    })
+
+
+    const newVa = new Vue({
+      el: '#cont',
+      data: {
+        errorMsg: '',
+        isEditing: {},
+        productList: []
+      },
+      created() {
+        this.load();
+      },
+      methods: {
+        load() {
+          fetch('/graphql', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              query: `
+                query {
+                  product(productId:"`+ product_id + `") {
+                        productName
+                        productId
+                        price
+                        product_photo
+                        look_like
+                        numberOfProduct
+                        boughtDate
+                        descript
+                        seller {
+                          userName
+                        }
+                    }
+                }
+                `
+            })
+          })
+            .then(async r => {
+              if (!r.ok) throw new Error(await r.text());
+              return r;
+            })
+            .then(r => r.json())
+            .then(r => (this.productList = r.data.product))
+            .catch(this.flash)
+        },
+        pay() {
+          const localItems = localStorage.getItem("items");
+          const opts = {
+            method: 'POST',
+            body: localItems,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+
+          return fetch('/cart', opts)
+            .then(async r => {
+              if (!r.ok) throw new Error(await r.text());
+              return r;
+            })
+            .then(localStorage.removeItem('items'))
+            .then(this.load)
+            .then(window.location.reload())
+            .catch(this.flash)
+
+        }
+      }
+    })
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
+    integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"
+    integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj"
+    crossorigin="anonymous"></script>
+  <!-- ref: https://v5.getbootstrap.com/docs/5.0/forms/validation/ -->
+  <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+  <!-- <script src="/javascripts/validateForm.js"></script> -->
+  <script src="/javascripts/cart.js"></script>
+
+</body>
+
+
+
+
+
+</html>

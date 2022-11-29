@@ -1,0 +1,66 @@
+type Query {
+  user(
+    userId:   ID!
+  ): User
+
+  users(
+    limit:  Int
+    offset: Int
+    sort:   String
+  ): [User]
+
+  product(
+    productId: ID!
+  ): Product
+
+  products(
+    limit:  Int
+    offset: Int
+    sort:   String
+  ): [Product]
+
+  history(
+    history_id: ID!
+  ): History
+
+  historys(
+    limit:  Int
+    offset: Int
+    sort:   String
+  ): [History]
+}
+
+type Mutation {
+    updateUser( userId: ID!, account: String, email: String): User!
+}
+
+type Product {
+  productId:    ID!
+  productName:  String!
+  price:        Int!
+  seller:       User!
+  category:     String!
+  boughtDate:   String!
+  product_photo:String!
+  look_like:    String!
+  numberOfProduct: Int!
+  descript:     String!
+}
+
+type User {
+  userId:   ID!
+  userName: String
+  account:  String!
+  pass: String!
+  email:    String!
+  products: [Product]
+  buyProducts: [History]
+}
+
+type History {
+  buyer:        String
+  buy_at:       String
+  num:          Int
+  product_name: String
+  price:         Int
+}

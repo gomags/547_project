@@ -246,6 +246,7 @@ app.post('/products/new', upload.single('product_photo'), async (req, res, next)
       })
     }
   })
+})
 
   //updating prodct availability
   app.post('/product/update', async (req,res) => {
@@ -257,6 +258,7 @@ app.post('/products/new', upload.single('product_photo'), async (req, res, next)
 
       }
   })
+})
 
   app.post('/user', async (req, res) => {
 

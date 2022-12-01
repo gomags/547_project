@@ -53,6 +53,28 @@ const ProductModel = {
     const rows = await ProductModel.load(context, productId);
     return (rows.length === 0 ? null : rows[0].price);
   },
+
+  getLocation: async (context, { productId }) => {
+    const rows = await ProductModel.load(context, productId);
+    return (rows.length === 0 ? null : rows[0].location);
+  },
+
+  getStartDate: async (context, { productId }) => {
+    const rows = await ProductModel.load(context, productId);
+    return (rows.length === 0 ? null : rows[0].startDate);
+  },
+
+  getEndtDate: async (context, { productId }) => {
+    const rows = await ProductModel.load(context, productId);
+    return (rows.length === 0 ? null : rows[0].endDate);
+  },
+
+  getCapacity: async (context, { productId }) => {
+    const rows = await ProductModel.load(context, productId);
+    return (rows.length === 0 ? null : rows[0].capacity);
+  },
+
+
   getSeller: async (context, { productId }) => {
     const rows = await ProductModel.load(context, productId);
 
@@ -101,6 +123,11 @@ const resolvers = {
     price: async({ productId }, _, context) => {
       return ProductModel.getPrice(context, { productId });
     },
+
+    location: async({ productId }, _, context) => {
+      return ProductModel.getLocation(context, { productId });
+    },
+
     seller: async({ productId }, _, context) => {
       
       return ProductModel.getSeller(context, { productId });
@@ -109,18 +136,23 @@ const resolvers = {
     category: async({ productId }, _, context) => {
       return ProductModel.getCategory(context, { productId });
     },
-    boughtDate: async({ productId }, _, context) => {
-      return ProductModel.getBoughtDate(context, { productId });
+
+    startDate: async({ productId }, _, context) => {
+      return ProductModel.getStartDate(context, { productId });
     },
+
+    endDate: async({ productId }, _, context) => {
+      return ProductModel.getEndtDate(context, { productId });
+    },
+
+    capacity: async({ productId }, _, context) => {
+      return ProductModel.getCapacity(context, { productId });
+    },
+
     product_photo: async({ productId }, _, context) => {
       return ProductModel.getProductPhoto(context, { productId });
     },
-    look_like: async({ productId }, _, context) => {
-      return ProductModel.getLookLike(context, { productId });
-    },
-    numberOfProduct: async({ productId }, _, context) => {
-      return ProductModel.getNumberOfProduct(context, { productId });
-    },
+    
     descript: async({ productId }, _, context) => {
       return ProductModel.getDescript(context, { productId });
     }
@@ -177,6 +209,7 @@ const resolvers = {
       return rows
     }
   },
+  
   User: {
     userName: async ({ userId }, _, context) => {
       return UserModel.getName(context, { userId });
@@ -226,6 +259,11 @@ const resolvers = {
     },
     price: async ({ HistoryId }, _, context) => {
       const [rows, fields] = await context.db.query('SELECT price FROM history WHERE history_id = ?', [HistoryId]);
+      return (rows.length === 0 ? null : rows[0].price );
+    },
+
+    reserveDate: async ({ HistoryId }, _, context) => {
+      const [rows, fields] = await context.db.query('SELECT reserveDate FROM history WHERE history_id = ?', [HistoryId]);
       return (rows.length === 0 ? null : rows[0].price );
     }
 

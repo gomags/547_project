@@ -51,43 +51,43 @@ catch(err){
   console.log(err)
 }
 
-// client.connect((err, conn) => {
-//   if (!err) {
-//     // const conn = conn;
-//     let db = conn.db(DB);
-//     db.createCollection("product", (err, res) => {
-//       if (!err) {
-//         console.log("create collection");
-//       }
-//     });
+client.connect((err, conn) => {
+  if (!err) {
+    // const conn = conn;
+    let db = conn.db(DB);
+    db.createCollection("product", (err, res) => {
+      if (!err) {
+        console.log("create collection");
+      }
+    });
 
-//     try {
-//       let collection = db.collection("product");
-//     } catch (e) {
-//       process.exit(5);
-//     }
+    try {
+      let collection = db.collection("product");
+    } catch (e) {
+      process.exit(5);
+    }
 
-//   }
-// });
+  }
+});
 
-// client.connect((err, conn) => {
-//   if (!err) {
-//     // const conn = conn;
-//     let db = conn.db(DB);
+client.connect((err, conn) => {
+  if (!err) {
+    // const conn = conn;
+    let db = conn.db(DB);
 
-//     db.createCollection("users", (err, res) => {
-//       if (!err) {
-//         console.log("create collection ");
-//       }
-//     });
+    db.createCollection("users", (err, res) => {
+      if (!err) {
+        console.log("create collection ");
+      }
+    });
 
-//     try {
-//       let collection = db.collection("users");
-//     } catch (e) {
-//       process.exit(5);
-//     }
-//   }
-// });
+    try {
+      let collection = db.collection("users");
+    } catch (e) {
+      process.exit(5);
+    }
+  }
+});
 
 
 const jsonBodyParser = bodyParser.json();
@@ -146,6 +146,7 @@ const { assertResolversPresent, makeExecutableSchema } = require('@graphql-tools
 
 const typeDefs = readFileSync('./schema.graphql').toString('utf-8')
 const resolvers = require('./resolvers');
+const { start } = require('repl');
 
 const schema = makeExecutableSchema({
   resolvers,
@@ -198,9 +199,39 @@ app.post('/products/new', upload.single('product_photo'), async (req, res, next)
       callback(err,null)
     }
     else {
+
+      var product = new Object();
+      let productId = req.query?.productId
+      let productName = req.query?.productName
+      let price = req.query?.price
+      let location = req.query?.location
+      let seller = req.query?.seller
+      let category = req.query?.category
+      let startDate = req.query?.startDate
+      let endDate = req.query?.endDate
+      let capacity = req.query?.capacity
+      let product_photo = req.query?.product_photo
+      let descript = req.query?.descript
+
+      product.productId = productId
+      product.productName = productName
+      product.price = price
+      product.location = location
+      product.seller = seller
+      product.category = category
+      product.startDate = startDate
+      product.endDate = endDate
+      product.capacity = capacity
+      product.product_photo = product_photo
+      product.descript = descript
+
       let db = conn.db(DB)
+      db.createCollection("product", (err, res) => {
+        if (!err){
+
+        }
+      })
       let collection = db.collection("product")
-      var new_product = new Object();
       //create schema for product
 
       collection.insertOne(new_product, (err,res) =>{
@@ -210,11 +241,72 @@ app.post('/products/new', upload.single('product_photo'), async (req, res, next)
         }
         else {
           conn.close()
-          callback(null, 'inserted')
+          callback(null, 'inserted product')
         }
       })
     }
   })
+
+  //updating prodct availability
+  app.post('/product/update', async (req,res) => {
+    this.client.connect((err,conn) => {
+      if(err) {
+        callback(err,null)
+      }
+      else {
+
+      }
+  })
+
+  app.post('/user', async (req, res) => {
+
+    this.client.connect((err,conn) => {
+      if(err) {
+        callback(err,null)
+      }
+      else {
+
+        var user = new Object();
+        let userId = req.query?.userId
+        let userName = req.query?.userName
+        let account = req.query?.account
+        let pass = req.query?.pass
+        let email = req.query?.email
+        let products = req.query?.products
+        let buyProducts = req.query?.buyProducts
+
+        user.userId = userId
+        user.userName = userName
+        user.account = account
+        user.pass = pass
+        user.email = email
+        user.products = products
+        user.buyProducts = buyProducts
+
+        let db = conn.db(DB)
+        db.createCollection("user", (err, res) => {
+          if (!err){
+
+          }
+        })
+
+        let collection = db.collection("user")
+        //create schema for product
+  
+        collection.insertOne(user, (err,res) =>{
+          if(err) {
+            conn.close()
+            callback(err,null)
+          }
+          else {
+            conn.close()
+            callback(null, 'inserted user')
+          }
+        })
+      }
+    })
+
+  
 
   req.flash('success', 'Successfully add a new product');
   res.redirect('/products/new');
@@ -267,5 +359,3 @@ app.use('/', userRoutes);
 
 app.listen(3000);
 console.log('GraphQL API server running at http://localhost:3000/graphql');
-
-

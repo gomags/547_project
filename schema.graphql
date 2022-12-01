@@ -38,12 +38,13 @@ type Product {
   productId:    ID!
   productName:  String!
   price:        Int!
+  location:     Int!
   seller:       User!
   category:     String!
-  boughtDate:   String!
+  startDate:   String!
+  endDate:   String!
+  capacity:   Int!
   product_photo:String!
-  look_like:    String!
-  numberOfProduct: Int!
   descript:     String!
 }
 
@@ -60,7 +61,7 @@ type User {
 type History {
   buyer:        String
   buy_at:       String
-  num:          Int
   product_name: String
   price:         Int
+  reserveDate:    String
 }

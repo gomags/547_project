@@ -76,68 +76,71 @@
         <div class="rightColumn">
 
             <div class="form-container">
-                <h4>Product Information</h4>
+                <h4>Car Information</h4>
                 <form ACTION="/products/new" METHOD="POST" ENCTYPE="multipart/form-data" class="validated-form">
 
                     <div class="mb-3">
-                        <label for="product_name">Product Name:</label>
-                        <input type="text" name="product_name" id="product_name" required autofocus />
+                        <label for="VIN">Vehicle Identification Number:</label>
+                        <input type="text" name="vin" id="vin" required autofocus />
                         <div class="valid-feedback">Looks good</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="category">Category: </label>
-                        <select name="category">
-                            <option value="Clothes" selected>Clothes</option>
-                            <option value="Furnitures">Furnitures</option>
-                        </select>
                     </div>
 
                     <div class="mb-3">
                         <label for="price">Price:</label>
-                        <input type="text" name="price" id="price" required />
+                        <input type="number" name="price" id="price" required />
+                        <div class="valid-feedback">Looks good</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="StartDate">Start Date:</label>
+                        <input id="car_date_in" type="date" name="car_date_in" required/>
+                        <div class="valid-feedback">Looks good</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="EndDate">End Date:</label>
+                        <input id="car_date_out" type="date" name="car_date_out" required/>
                         <div class="valid-feedback">Looks good</div>
                     </div>
 
 
                     <div class="mb-3">
-                        <label for="boughtDate">When did you buy:</label>
-                        <input type="text" name="boughtDate" id="boughtDate" required />
+                        <label for="product_photo">Car Images:</label>
+                        <input type="file" name="product_photo" id="product_photo" multiple ="multiple" accept="image/jpeg, image/png, image/jpg" required />
                         <div class="valid-feedback">Looks good</div>
                     </div>
-
-
-                    <div class="mb-3">
-                        <label for="product_photo">Picture:</label>
-                        <input type="file" name="product_photo" id="product_photo" required />
-                        <div class="valid-feedback">Looks good</div>
-                    </div>
-
 
                     <div class="mb-3">
                         <label for="Look like">Appearance:</label>
-                        <input type="radio" name="look_like" id="look_like" value="Look like new" />Look like
+                        <input type="radio" name="look_like" id="look_like" value="Like new" />Looks like
                         new
                         <input type="radio" name="look_like" id="look_like" value="Used" />Used
-
                     </div>
 
-                    <div class="mb-3">
-                        <label for="numberOfProduct">Number of Product:</label>
-                        <select name="numberOfProduct">
-                            <option value="1" selected>1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </div>
+                    <input type="text" id="latlng" name="latlng" hidden/>
+                    <div>
+                        <label for="Car Location">Location:</label>
+                        <input
+                          id="pac-input"
+                          class="controls"
+                          type="text"
+                          placeholder="Location"
+                          style="width: 90%;"
+                          name = "car_location"
+                        />
+            
+                        <script
+                          async
+                          defer
+                          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk-spvVNSgJWusP6KkVI-EYat2TpMJgYQ&libraries=places&signed_in=true&callback=initMap"
+                        ></script>
+                      </div>
 
                     <div class="mb-3"><label for="descript">Description:</label>
-                        <textarea rows="3" cols="30" name="descript" placeholder="Describe your item..."></textarea>
+                        <textarea rows="3" cols="30" name="descript" placeholder="Description"></textarea>
                     </div>
 
-                    <input class="btn btn-success" type="submit" value="Add product" />
+                    <input class="btn btn-success" id="add_car" type="submit" value="Add car" />
                 </form>
             </div>
 
@@ -151,24 +154,69 @@
 
 
 <script type="text/javascript">
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
 
-            reader.onload = function (e) {
-                $('#preview_img').attr('src', e.target.result);
-            }
+    function initMap() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    }
+                    const geocoder = new google.maps.Geocoder();
 
-            reader.readAsDataURL(input.files[0]); // convert to base64 string
+                    geocoder
+                    .geocode({ location: pos })
+                    .then((response) => {
+                        console.log(response)
+                        var place =response.results[0].formatted_address;
+                        document.getElementById('pac-input').value = place;
+                    })
+
+                    document.getElementById('latlng').value = pos.lat + ":" + pos.lng;
+                },
+                function () {
+                    handleLocationError(true, infoWindow, map.getCenter())
+                }
+            )
+        } else {
+            handleLocationError(false, infoWindow, map.getCenter())
         }
+        var input = document.getElementById("pac-input")
+        var searchBox = new google.maps.places.SearchBox(input)
+        
+        searchBox.addListener("places_changed", function () {
+            var places = searchBox.getPlaces();
+            if (places.length == 0) {
+                return
+            }
+        })
     }
+        
+    document.querySelector("#product_photo").addEventListener("change", (e) => { 
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            const files = e.target.files;
+            const output = document.querySelector("#preview_img");
+            output.innerHTML = "";
+            for (let i = 0; i < files.length; i++) {
+            if (!files[i].type.match("image")) continue;
+                const picReader = new FileReader();
+                picReader.addEventListener("load", function (event) {
+                const picFile = event.target;
+                const div = document.createElement("div");
+                div.innerHTML = `<img class="thumbnail" src="${picFile.result}" title="${picFile.name}"/>`;
+                output.appendChild(div);
+                });
+                picReader.readAsDataURL(files[i]);
+            }
+        } else {
+            alert("Your browser does not support File API");
+        }
+    })
 
-    $("#product_photo").change(function () {
-        readURL(this);
-    });
+
 </script>
 
-<!-- padding  y-axis top and bottom-->
 <footer class="footer bg-dark py-3 mt-auto">
     <div class="container">
         <span class="text-muted">&copf; Bhumi, Gopi & Vibhav 2022 </span>

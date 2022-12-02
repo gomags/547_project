@@ -6,10 +6,9 @@ const UserModel = {
       return context.userCache[userId];
     }
 
-    const [rows, fields] = await context.db.query('SELECT * FROM user WHERE user_id = ?', [userId]);
-    
-    context.userCache[userId] = rows;
-    return rows;
+    const user_data = await context.db.collection('users').findOne(ObjectId(userId))
+    context.userCache[userId] = user_data;
+    return user_data;
   },
 
   getName: async (context, { userId }) => {
@@ -31,123 +30,130 @@ const UserModel = {
     const rows = await UserModel.load(context, userId);
     return (rows.length === 0 ? null : rows[0].email);
   }
-
- 
 }
 
-const ProductModel = {
-  load: async (context, productId) => {
-    if (context.userCache[productId]) {
-      return context.productCache[productId];
+const carModel = {
+  load: async (context, carId) => {
+    if (context.userCache[carId]) {
+      return context.productCache[carId];
     }
-    const [rows, fields] = await context.db.query('SELECT * FROM product WHERE product_id = ?', [productId]);
-    context.productCache[productId] = rows;
-    return rows;
+    // const [rows, fields] = await context.db.query('SELECT * FROM product WHERE product_id = ?', [carId]);
+    const car_data = await context.db.collection('product').findOne(ObjectId(carId))
+    context.productCache[carId] = car_data;
+    return car_data;
   },
 
-  getName: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].productName);
+  getcarName: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
+    return (rows.length === 0 ? null : rows[0].carName);
   },
-  getPrice: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
+  getPrice: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
     return (rows.length === 0 ? null : rows[0].price);
   },
-  getSeller: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-
-    return (rows.length === 0 ? null : { userId: rows[0].seller });
+  getOwner: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
+    return (rows.length === 0 ? null : { userId: rows[0].owner });
   },
-  
-  getCategory: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].category);
+  getManufacturer: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
+    return (rows.length === 0 ? null : rows[0].manufacturer);
   },
-  getBoughtDate: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].boughtDate);
+  getvehicleType: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
+    return (rows.length === 0 ? null : rows[0].vehicleType);
   },
-  getProductPhoto: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].product_photo);
+  getCapacity: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
+    return (rows.length === 0 ? null : rows[0].capacity);
   },
-  getLookLike: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
+  gettransmissionStyle: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
+    return (rows.length === 0 ? null : rows[0].transmissionStyle);
+  },
+  getcarDates: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
+    return (rows.length === 0 ? null : rows[0].car_dates);
+  },
+  getcarPhoto: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
+    return (rows.length === 0 ? null : rows[0].car_photo);
+  },
+  getLookLike: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
     return (rows.length === 0 ? null : rows[0].look_like);
   },
-  getNumberOfProduct: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].numberOfProduct);
+  getcoord: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
+    return (rows.length === 0 ? null : rows[0].coord);
   },
-  getDescript: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
+  getDescript: async (context, { carId }) => {
+    const rows = await carModel.load(context, carId);
     return (rows.length === 0 ? null : rows[0].descript);
   }
-  
-
 }
-
-
 
 const resolvers = {
   Product: {
-    productId: ({ productId }, _, context) => {
-      return productId;
+    carId: ({ carId }, _, context) => {
+      return carId;
     },
-    productName: async({ productId }, _, context) => {
-      
-      return ProductModel.getName(context, { productId });
+    carName: async({ carId }, _, context) => {
+      return carModel.getcarName(context, { carId });
     },
-    price: async({ productId }, _, context) => {
-      return ProductModel.getPrice(context, { productId });
+    price: async({ carId }, _, context) => {
+      return carModel.getPrice(context, { carId });
     },
-    seller: async({ productId }, _, context) => {
-      
-      return ProductModel.getSeller(context, { productId });
+    owner: async({ carId }, _, context) => {
+      return carModel.getOwner(context, { carId });
     },
-    
-    category: async({ productId }, _, context) => {
-      return ProductModel.getCategory(context, { productId });
+    manufacturer: async({ carId }, _, context) => {
+      return carModel.getManufacturer(context, { carId });
     },
-    boughtDate: async({ productId }, _, context) => {
-      return ProductModel.getBoughtDate(context, { productId });
+    vehicleType: async({ carId }, _, context) => {
+      return carModel.getvehicleType(context, { carId });
     },
-    product_photo: async({ productId }, _, context) => {
-      return ProductModel.getProductPhoto(context, { productId });
+    capacity: async({ carId }, _, context) => {
+      return carModel.getCapacity(context, { carId });
     },
-    look_like: async({ productId }, _, context) => {
-      return ProductModel.getLookLike(context, { productId });
+    transmissionStyle: async({ carId }, _, context) => {
+      return carModel.gettransmissionStyle(context, { carId });
     },
-    numberOfProduct: async({ productId }, _, context) => {
-      return ProductModel.getNumberOfProduct(context, { productId });
+    car_photo: async({ carId }, _, context) => {
+      return carModel.getcarPhoto(context, { carId });
     },
-    descript: async({ productId }, _, context) => {
-      return ProductModel.getDescript(context, { productId });
+    car_dates: async({ carId }, _, context) => {
+      return carModel.getcarDates(context, { carId });
+    },
+    look_like: async({ carId }, _, context) => {
+      return carModel.getLookLike(context, { carId });
+    },
+    coord: async({ carId }, _, context) => {
+      return carModel.getcoord(context, { carId });
+    },
+    descript: async({ carId }, _, context) => {
+      return carModel.getDescript(context, { carId });
     }
-    
   },
+
   Query: {
     user: async (_, { userId }, context) => {
-      const [rows, fields] = await context.db.query('SELECT user_id AS userId FROM user WHERE user_id = ?', [userId]);
-      // console.log("Query user", userId)
+      const rows = await context.db.collection('users').findOne(ObjectId(userId))
       return (rows.length > 0 ? { userId: rows[0].userId } : null);
     },
     users: async (_, { limit = 20, offset = 0, sort = 'ASC' }, context) => {
-      const [rows, fields] = await context.db.query('SELECT user_id AS userId FROM user LIMIT ? OFFSET ?', [limit, offset]);
-      // console.log("Query users:")
+      const rows = await context.db.collection('users').find({})
       return rows;
     },
-    product: async (_, { productId }, context) => {
-      const [rows, fields] = await context.db.query('SELECT product_id AS productId FROM product WHERE product_id = ?', [productId]);
-      return (rows.length > 0 ? { productId: rows[0].productId } : null);
+    product: async (_, { carId }, context) => {
+      const rows = await context.db.collection('product').find(ObjectId(carId))
+      return (rows.length > 0 ? { carId: rows[0].carId } : null);
     },
     products: async (_, { limit = 20, offset = 0, sort = 'ASC' }, context) => {
-      const [rows, fields] = await context.db.query('SELECT product_id AS productId FROM product LIMIT ? OFFSET ?', [limit, offset]);
+      const rows = await context.db.collection('product').find({})
       return rows;
     },
-
     history: async (_, { historyId }, context) => {
-      // console.log("history", historyId);
       const [rows, fields] = await context.db.query('SELECT history_id AS historyId FROM history WHERE history_id = ?', [historyId]);
       return (rows.length > 0 ? { historyId: rows[0].historyId } : null);
     },
@@ -195,8 +201,8 @@ const resolvers = {
     },
     products: async ({ userId }, _, context) => {
 
-      const [rows, fields] = await context.db.query('SELECT product_id AS productId FROM product WHERE seller = ?', [userId]);
-      return rows.map(({ productId }) => ({ productId: productId }));
+      const [rows, fields] = await context.db.query('SELECT product_id AS carId FROM product WHERE seller = ?', [userId]);
+      return rows.map(({ carId }) => ({ carId: carId }));
     },
     buyProducts: async ({ userId }, _, context) => {
       const [rows, fields] = await context.db.query('SELECT history_id AS HistoryId FROM history WHERE buyer = ?', [userId]);

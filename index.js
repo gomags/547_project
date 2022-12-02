@@ -18,16 +18,27 @@ const userRoutes = require('./routes/users')
 
 const flash = require('connect-flash')
 const session = require('express-session')
-// const mongoose = require("mongoose")
+const mongoose = require("mongoose")
 const passport = require("passport")
 const bodyParser = require("body-parser")
 const LocalStrategy = require("passport-local")
 
 const User = require("./models/user");
-
 const MongoDBStore = require("connect-mongo")(session);
 
 const {MongoClient, ObjectId} = require('mongodb')
+
+let LookupVehicle = require('lookup_vehicle');
+// const NodeGeocoder = require('node-geocoder');
+
+// const options = {
+//   provider: 'google',
+
+//   // Optional depending on the providers
+//   fetch: customFetchImplementation,
+//   apiKey: 'AIzaSyBk-spvVNSgJWusP6KkVI-EYat2TpMJgYQ', // for Mapquest, OpenCage, Google Premier
+//   formatter: null // 'gpx', 'string', ...
+// };
 
 var config_var = {
     host: "localhost",
@@ -191,78 +202,104 @@ app.get('/products/new', (req, res, next) => {
     res.render('add');
 });
 // post a new product
-app.post('/products/new', upload.single('product_photo'), async (req, res, next) => {
+app.post('/products/new', upload.array('product_photo', 5), async (req, res, next) => {
 
-  this.client.connect((err,conn) => {
-    if(err) {
-      callback(err,null)
+  function getDatesInRange(startDate, endDate) {
+    const date = new Date(startDate);
+    const dates = [];
+    while (date <= new Date(endDate)) {
+      dates.push(new Date(date));
+      date.setDate(date.getDate() + 1);
     }
-    else {
-      let db = conn.db(DB)
-      let collection = db.collection("product")
-      var new_product = new Object();
-      //create schema for product
+    return dates;
+  }
 
-      collection.insertOne(new_product, (err,res) =>{
-        if(err) {
-          conn.close()
-          callback(err,null)
-        }
-        else {
-          conn.close()
-          callback(null, 'inserted')
-        }
-      })
-    }
-  })
+  client.connect((err,conn) => {
 
+    var files_path = ''
+    var car_vin_detail = ''
+    LookupVehicle.lookup_callback(req.body.vin, (err, result) => {
+      if (err) {
+        console.log(err);
+        // callback(err)
+        } else {
+          car_vin_detail = result.Results[0]
+          if(err) {
+            callback(err,null)
+          }
+          else {
+            for (var i =0; i<req.files.length;i++) {
+              files_path +=  `${req.files[i].path};`
+            }
+            var car_dates = getDatesInRange(req.body.car_date_in, req.body.car_date_out)
+            let db = conn.db(DB)
+            let collection = db.collection("product")
+            var new_car = new Object();
+            new_car.owner = req.user._id
+            new_car.carName = car_vin_detail.Make + ' ' + car_vin_detail.Model + ' ' + car_vin_detail.ModelYear
+            new_car.manufacturer = car_vin_detail.Manufacturer
+            new_car.vehicleType = car_vin_detail.VehicleType
+            new_car.capacity = car_vin_detail.Seats
+            new_car.transmissionStyle = car_vin_detail.TransmissionStyle
+            new_car.price = req.body.price
+            new_car.car_photo = files_path
+            new_car.car_dates = car_dates
+            new_car.look_like = req.body.look_like
+            new_car.coord = req.body.latlng
+            new_car.descript = req.body.descript
+
+            // var geocoder = new google.maps.Geocoder();
+            // geocoder.geocode( { 'address': req.body.car_location}, async function(results, status) {
+            //   const geocoder = NodeGeocoder(options);
+            //   // Using callback
+            //   const res = await geocoder.geocode('29 champs elysée paris');
+            //   console.log(results)
+            // })
+
+            collection.insertOne(new_car)
+          }
+        }
+      });
+    })
   req.flash('success', 'Successfully add a new product');
   res.redirect('/products/new');
 });
 
 app.get('/products/new/:productId', jsonBodyParser, async (req, res, next) => {
-  
   res.render('productDetail')
-
 });
 
-// Show products
 app.get('/products', async (req, res, next) => {
   res.render("products")
 });
 
-// checkout
-app.post('/cart', jsonBodyParser, async(req, res, next) => {
+// app.post('/cart', jsonBodyParser, async(req, res, next) => {
+//     for(let i = 0; i < req.body.length; i++) {
+//         const curUser = req.user._id
+//         const {productName, productId, price, sellerName, number } = req.body[i];
+
+//         const q = 'SELECT numberOfProduct FROM product WHERE product_id =?';
+//         const d  = [productId];
+//         const [rows, fields] = await connection.promise().query(q, d);
+
+//         const numberOfProduct = rows[0].numberOfProduct - number;
+
+//         const updateq = 'UPDATE product SET numberOfProduct=?  WHERE product_id=?';
+//         const updated = [numberOfProduct, productId];
+//         const [rowsUPDATE, fieldsUPDATE] = await connection.promise().query(updateq, updated);
+
+//         const insertq = 'INSERT INTO history (buyer, seller, product_name, num, price) VALUES (?, ?, ?, ?, ?)';
+//         const insertd = [String(curUser), String(sellerName), productName, number, Number(price)*Number(number)];
+//         const [rowsInsert, fieldsInsert] = await connection.promise().query(insertq, insertd);
+//     }
     
-    for(let i = 0; i < req.body.length; i++) {
-        const curUser = req.user._id
+// }) 
 
-        const {productName, productId, price, sellerName, number } = req.body[i];
 
-        const q = 'SELECT numberOfProduct FROM product WHERE product_id =?';
-        const d  = [productId];
-        const [rows, fields] = await connection.promise().query(q, d);
-
-        const numberOfProduct = rows[0].numberOfProduct - number;
-
-        const updateq = 'UPDATE product SET numberOfProduct=?  WHERE product_id=?';
-        const updated = [numberOfProduct, productId];
-        const [rowsUPDATE, fieldsUPDATE] = await connection.promise().query(updateq, updated);
-
-        const insertq = 'INSERT INTO history (buyer, seller, product_name, num, price) VALUES (?, ?, ?, ?, ?)';
-        const insertd = [String(curUser), String(sellerName), productName, number, Number(price)*Number(number)];
-        const [rowsInsert, fieldsInsert] = await connection.promise().query(insertq, insertd);
-    }
-    
-}) 
-
-// Profile
 app.get('/profile', (req, res, next) => {
     res.render('profile')
 })
 
-// user route
-// they are in routes folder
 app.use('/', userRoutes);
 
 app.listen(3000);

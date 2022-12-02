@@ -35,16 +35,19 @@ type Mutation {
 }
 
 type Product {
-  productId:    ID!
-  productName:  String!
-  price:        Int!
-  seller:       User!
-  category:     String!
-  boughtDate:   String!
-  product_photo:String!
-  look_like:    String!
-  numberOfProduct: Int!
-  descript:     String!
+  carId:    ID!
+  carName:      String!
+  owner: String!
+  manufacturer: String
+  vehicleType:  String
+  capacity:     String
+  transmissionStyle: String
+  price : Int!
+  car_photo: String!
+  car_dates: [String]!
+  look_like: String!
+  coord: String!
+  descript: String!
 }
 
 type User {

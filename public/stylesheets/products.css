@@ -140,4 +140,145 @@ body {
 }
 
 
+.column-4 {
+  float: center;
+  width: 21%;
+  padding: 10px;
+  margin:20px;
+  height: 250px;
+}
 
+/* Hover classes for individual project boxes */
+
+.project-2:hover {
+  background-color:#FEDE00;
+}
+
+.project-3:hover {
+   background-color: #FEDE00;
+}
+
+.project-4:hover {
+   background-color: #FEDE00;
+}
+
+.project-5:hover {
+   background-color: #FEDE00;
+}
+
+.project-6:hover {
+   background-color: #FEDE00;
+}
+
+.project-7:hover {
+   background-color: #FEDE00;
+}
+
+
+.project-1 {
+  background: url('../images/project-left.jpeg');
+  background-size: cover;
+}
+
+.project-2 {
+  background-color:white;
+}
+
+.project-3 {
+  background-color:#209BFF;
+}
+
+.project-4 {
+  background-color:#112d4e;
+}
+
+.project-5 {
+  background-color:#F9F7F7;
+}
+
+.project-6 {
+  background-color:#209BFF;
+}
+
+.project-7 {
+    background-color:#F9F7F7;
+}
+
+.project-8 {
+  background: url('../images/project-right.jpeg');
+  background-size: cover;
+}
+
+/* SEARCH BAR */
+#pac-input {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 300px;
+}
+
+#pac-input:focus {
+  border-color: #4d90fe;
+}
+
+.pac-container {
+  font-family: Roboto;
+}
+
+#type-selector {
+  color: #fff;
+  background-color: #4d90fe;
+  padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: 300;
+}
+#target {
+  width: 345px;
+}
+
+#map {
+  /* height: 500px; 
+  width: 500px;  */
+  /* position: absolute; */
+  overflow: hidden;
+  /* z-index: 12345678; */
+  /* top: 50%;
+  left: 30%; */
+  width: 100%;
+  height: 100vh;
+}
+
+.column {
+  float: center;
+  /* width: 21%;
+  padding: 10px;
+  margin: 20px; */
+  height: 150px;
+  margin: 10px;
+}
+
+.search-container {
+  display: flex;
+  margin: 10px;
+}
+
+.search-results {
+  width: 60%;
+  margin-right: 10px;
+}
+
+.map-container {
+  width: 50%;
+}
+
+#map {
+  margin: 10px;
+}

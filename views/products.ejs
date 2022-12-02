@@ -1,288 +1,447 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- Favicon -->
+    <link
+      href="/stylesheets/image/Bee.jpg"
+      rel="shortcut icon"
+      type="image/ico"
+    />
+    <title>Community Car Rentals</title>
+    <!-- we need to careful the link CDN may change its version and cause some code cannot work properly -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.9/vue.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <!-- Favicon -->
-  <link href="/stylesheets/image/Bee.jpg" rel="shortcut icon" type="image/ico" />
-  <title>Community Car Rentals</title>
-  <!-- we need to careful the link CDN may change its version and cause some code cannot work properly -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.9/vue.js"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/stylesheets/products.css" />
 
-  <link rel="stylesheet" href="/stylesheets/products.css">
+    <script>
+      FontAwesomeConfig = { autoReplaceSvg: false };
+    </script>
+    <!-- font -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
 
-  <script>
-    FontAwesomeConfig = { autoReplaceSvg: false }
-  </script>
-  <!-- font -->
-  <link rel="stylesheet" type="text/css"
-    href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-
-  <script>
-    function Delete(e) {
-      let items = [];
-      JSON.parse(localStorage.getItem('items')).map(data => {
-        if (data.productId != e.parentElement.parentElement.children[0].textContent) {
-
-          items.push(data);
-
-        }
-        else {
-          if (data.number - 1 != 0) {
-            data.number = data.number - 1;
+    <script>
+      function Delete(e) {
+        let items = [];
+        JSON.parse(localStorage.getItem("items")).map((data) => {
+          if (
+            data.productId !=
+            e.parentElement.parentElement.children[0].textContent
+          ) {
             items.push(data);
+          } else {
+            if (data.number - 1 != 0) {
+              data.number = data.number - 1;
+              items.push(data);
+            }
           }
-        }
-      });
-      localStorage.setItem('items', JSON.stringify(items));
-      window.location.reload();
-    };
-  </script>
-</head>
+        });
+        localStorage.setItem("items", JSON.stringify(items));
+        window.location.reload();
+      }
+    </script>
+  </head>
 
+  <body class="d-flex flex-column vh-100">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/home">Community Car Rentals</a>
 
-<body class="d-flex flex-column vh-100">
-  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/home">Community Car Rentals</a>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav w-100">
+            <a class="nav-link" href="/home">Home</a>
 
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav w-100">
-          <a class="nav-link " href="/home">Home</a>
-          
-          <% if(currentUser) {%>
-          <a class="nav-link" href="/products/new">List-A-Car</a>
-          <% } %>
-          <a class="nav-link" href="/products">Rent-A-Car</a>
-        </div>
-        <div class="navbar-nav ml-auto">
-          <% if(!currentUser) {%>
+            <% if(currentUser) {%>
+            <a class="nav-link" href="/products/new">List-A-Car</a>
+            <% } %>
+            <a class="nav-link" href="/products">Rent-A-Car</a>
+          </div>
+          <div class="navbar-nav ml-auto">
+            <% if(!currentUser) {%>
 
-          <a class="nav-link" href="/login">Login</a>
-          <a class="nav-link" href="/register">Register</a>
-          <% } else { %>
-          <p id="cartNum" style="color: aquamarine;">0</p>
-          <i class="iconShopping fa fa-shopping-cart fa-2x fa-fw" style="color: aquamarine;"></i>
-          <a class="nav-link" href="/profile">Profile</a>
-          <a id="logout" class="nav-link" href="/logout">Logout</a>
-          <% } %>
-          <a class="nav-link" href="/about">About</a>
-        </div>
-      </div>
-    </div>
-  </nav>
-  <% if(success && success.length) { %>
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <%= success %>
-    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
-  </div>
-  <% } %>
-
-  <% if(error && error.length) { %>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <%= error %>
-    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
-  </div>
-  <% } %>
-
-  <!-- Slides -->
-  <div class="middleTop">
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-      <ol class="carousel-indicators">
-        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-      </ol>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="https://res.cloudinary.com/ja841014/image/upload/v1620446364/MovingSale/Slide-1_yqfjnn.jpg"
-            alt="Cannot show the picture">
-        </div>
-        <div class="carousel-item">
-          <img src="https://res.cloudinary.com/ja841014/image/upload/v1620446471/MovingSale/Slide-2_yy6rvx.jpg"
-            alt="Cannot show the picture">
-        </div>
-        <div class="carousel-item">
-          <img src="https://res.cloudinary.com/ja841014/image/upload/v1620446473/MovingSale/Slide-3_bl1gev.jpg"
-            alt="Cannot show the picture">
+            <a class="nav-link" href="/login">Login</a>
+            <a class="nav-link" href="/register">Register</a>
+            <% } else { %>
+            <p id="cartNum" style="color: aquamarine">0</p>
+            <i
+              class="iconShopping fa fa-shopping-cart fa-2x fa-fw"
+              style="color: aquamarine"
+            ></i>
+            <a class="nav-link" href="/profile">Profile</a>
+            <a id="logout" class="nav-link" href="/logout">Logout</a>
+            <% } %>
+            <a class="nav-link" href="/about">About</a>
+          </div>
         </div>
       </div>
-      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Prev</span>
-      </a>
-      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-      </a>
+    </nav>
+    <% if(success && success.length) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= success %>
+      <button
+        type="button"
+        class="btn-close"
+        data-dismiss="alert"
+        aria-label="Close"
+      ></button>
     </div>
-  </div>
-
-  <div class="middle">
-    <div class="leftColumn">
-      <ul>
-        <li><a style="color: bisque;" href="/products" class="btn active" data-filter="all">All</a></li>
-        <li><a style="color: bisque;" href="/products" class="btn" data-filter="Clothes">Clothes</a></li>
-        <li><a style="color: bisque;" href="/products" class="btn" data-filter="Furnitures">Furnitures</a></li>
-
-      </ul>
+    <% } %> <% if(error && error.length) { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <%= error %>
+      <button
+        type="button"
+        class="btn-close"
+        data-dismiss="alert"
+        aria-label="Close"
+      ></button>
     </div>
+    <% } %>
 
-    <div class="container">
-      <div class="row" id="content">
-        <div v-for="(product, idx) in productList" style="text-align: center;"
-          class="store-product col-lg-3 col-md-4 col-6 item" v-bind:class="product.category">
+    <!-- <div class="column project-0"></div> -->
+
+    <div style="overflow: hidden;">
+      <!-- <div class="column project-1"></div> -->
+
+      <div class="search-container">
+        <div class="search-results">
           <div>
-            <a :href="'/products/new/'+product.productId">
-              <img v-if="product.product_photo" :src="product.product_photo" />
-              <img v-else src="/stylesheets/image/Bee.jpg" />
-            </a>
+            <input
+              id="pac-input"
+              class="controls"
+              type="text"
+              placeholder="Location"
+              style="width: 90%;"
+            />
+            <!-- <button type="button" onclick={initMap()}>show</button> -->
+
+            <script
+              async
+              defer
+              src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk-spvVNSgJWusP6KkVI-EYat2TpMJgYQ&libraries=places&signed_in=true&callback=initMap"
+            ></script>
           </div>
-          <div style="color: bisque; ">
-            {{product.productName}}
+
+          <!-- <div class="container">
+            <div class="row" id="content">
+              <div v-for="(product, idx) in productList" style="text-align: center;"
+                class="store-product col-lg-3 col-md-4 col-6 item" v-bind:class="product.category">
+                <div>
+                  <a :href="'/products/new/'+product.productId">
+                    <img v-if="product.product_photo" :src="product.product_photo" />
+                    <img v-else src="/stylesheets/image/Bee.jpg" />
+                  </a>
+                </div>
+                <div style="color: bisque; ">
+                  {{product.productName}}
+                </div>
+              </div>
+            </div>
           </div>
+        </div> -->
+
+          <div style="overflow: scroll;height: 100vh;">
+            
+            <div class="column project-2">
+              <h2 class="project-text">WEB <br />DESIGN</h2>
+              
+            </div>
+
+            <div class="column project-3">
+              <h2 class="project-text">CHAT <br />BOTS</h2>
+            </div>
+
+            <div class="column project-4">
+              <h2 class="project-text">
+                GAME <br />
+                DESIGN
+              </h2>
+            </div>
+
+            <div class="column project-5">
+              <h2 class="project-text">
+                TEXT <br />
+                ANALYSIS
+              </h2>
+            </div>
+
+            <div class="column project-6">
+              <h2 class="project-text">
+                JAVA <br />
+                SCRIPT
+              </h2>
+            </div>
+
+            <div class="column project-7">
+              <h2 class="project-text">
+                DATA <br />
+                PRIVACY
+              </h2>
+            </div>
+            <input type="text" id="search_latlng" name="search_latlng" hidden/>
+          </div>  
+        </div>
+        <div class="map-container">
+          
+            From:<input id="search_date_in" type="date" name="search_date_in" />
+            <!-- <input id="time_in" type="time" name="task_time" /> -->
+            To:<input id="search_date_out" type="date" name="search_date_out" />
+            <!-- <input id="time_out" type="time" name="task_time" /> -->
+            <button id="search_cars" name="search_cars">   Search</button>
+
+          <div id="map"></div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div id="cont" class="cartBox">
-    <div class="cart">
-      <i class="fa fa-close"></i>
-      <h1>Cart</h1>
-      <h3 class="mb-0" style="color:black;">Things to Buy</h3>
-      <div class="container">
-        <div style="background-color: rgba(99, 111, 216, 0.5)" class="row">
-          <div class="col-sm" style="color:black;">
-            Name
-          </div>
-          <div class="col-sm" style="color:black;">
-            Price
-          </div>
-          <div class="col-sm" style="color:black;">
-            Number
-          </div>
-          <div class="col-sm" style="color:black;">
-            Cancel
-          </div>
-        </div>
-      </div>
-      <div id="showItem" class="container" style="color:black;"></div>
-      <div id="total" style="float:right; color:black;"> Total Price: $ 0</div>
-      <button class="btn btn-info" style="float:right" @click="pay();"> Buy Them All</button>
-    </div>
-  </div>
+    <!-- <script type="text/javascript">
+      $(".carousel").carousel({
+        interval: 2000,
+      });
+    </script> -->
 
-
-  <script type="text/javascript">
-    $('.carousel').carousel({
-      interval: 2000
-    });
-  </script>
-
-  <script>
-    const va = new Vue({
-      el: '#content',
-      data: {
-        errorMsg: '',
-        isEditing: {},
-        productList: []
-      },
-      created() {
-        this.load();
-      },
-      methods: {
-        load() {
-          fetch('/graphql', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              query: `
+    <script>
+      const va = new Vue({
+        el: "#content",
+        data: {
+          errorMsg: "",
+          isEditing: {},
+          productList: [],
+        },
+        created() {
+          this.load();
+        },
+        methods: {
+          load() {
+            fetch("/graphql", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                query: `
           query {
               
               products {
-                      productName
-                      productId
-                      price
-                      product_photo
-                      look_like
-                      numberOfProduct
-                      boughtDate
-                      category
+                carId
+                owner
+                carName
+                manufacturer
+                vehicleType
+                capacity
+                transmissionStyle
+                price
+                car_photo
+                car_dates
+                look_like
+                coord
+                descript
                   }
             }
-          `
+          `,
+              }),
             })
-          })
-            .then(async r => {
-              if (!r.ok) throw new Error(await r.text());
-              return r;
-            })
-            .then(r => r.json())
-            .then(r => (this.productList = r.data.products))
-            .catch(this.flash)
-        }
-      }
-    })
-    const newVa = new Vue({
-      el: '#cont',
-      data: {
-        errorMsg: '',
-        isEditing: {},
-        productList: []
-      },
-      created() {
+              .then(async (r) => {
+                if (!r.ok) throw new Error(await r.text());
+                return r;
+              })
+              .then((r) => r.json())
+              .then((r) => (this.productList = r.data.products))
+              .catch(this.flash);
+          },
+        },
+      });
 
-      },
-      methods: {
-        pay() {
-          const localItems = localStorage.getItem("items");
+      const newVa = new Vue({
+        el: "#cont",
+        data: {
+          errorMsg: "",
+          isEditing: {},
+          productList: [],
+        },
+        created() {},
+        methods: {
+          pay() {
+            const localItems = localStorage.getItem("items");
 
-          const opts = {
-            method: 'POST',
-            body: localItems,
-            headers: {
-              'Content-Type': 'application/json'
+            const opts = {
+              method: "POST",
+              body: localItems,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            };
+
+            return fetch("/cart", opts)
+              .then(async (r) => {
+                if (!r.ok) throw new Error(await r.text());
+                return r;
+              })
+              .then(localStorage.removeItem("items"))
+              .then(this.load)
+              .then(window.location.reload())
+              .catch(this.flash);
+          },
+        },
+      });
+
+      // Location search
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 34.0224, lng: -118.2851 },
+          zoom: 6,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+        });
+        // var infoWindow = new google.maps.InfoWindow({ map: map });
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              };
+
+              const geocoder = new google.maps.Geocoder();
+
+              geocoder
+              .geocode({ location: pos })
+              .then((response) => {
+                  console.log(response)
+                  var place =response.results[0].formatted_address;
+                  document.getElementById('pac-input').value = place;
+              })
+
+              document.getElementById('search_latlng').value = pos.lat + ":" + pos.lng;
+
+              // infoWindow.setPosition(pos);
+              // infoWindow.setContent("Location found.");
+              map.setCenter(pos);
+            },
+            function () {
+              handleLocationError(true, infoWindow, map.getCenter());
             }
-          };
-
-          return fetch('/cart', opts)
-            .then(async r => {
-              if (!r.ok) throw new Error(await r.text());
-              return r;
-            })
-            .then(localStorage.removeItem('items'))
-            .then(this.load)
-            .then(window.location.reload())
-            .catch(this.flash)
-
+          );
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
         }
+
+        // Create the search box and link it to the UI element.
+        var input = document.getElementById("pac-input");
+        var searchBox = new google.maps.places.SearchBox(input);
+        // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        // console.log(map.geometry.location.lat())
+
+        // Bias the SearchBox results towards current map's viewport.
+        map.addListener("bounds_changed", function () {
+          // console.log("bounds changed");
+          searchBox.setBounds(map.getBounds());
+        });
+
+        var markers = [];
+        // Listen for the event fired when the user selects a prediction and retrieve
+        // more details for that place.
+        searchBox.addListener("places_changed", function () {
+          // console.log("search box  places changed");
+          var places = searchBox.getPlaces();
+
+          if (places.length == 0) {
+            return;
+          }
+
+          // Clear out the old markers.
+          markers.forEach(function (marker) {
+            marker.setMap(null);
+          });
+          markers = [];
+
+          // For each place, get the icon, name and location.
+          var bounds = new google.maps.LatLngBounds();
+          places.forEach(function (place) {
+            var icon = {
+              url: place.icon,
+              size: new google.maps.Size(71, 71),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(17, 34),
+              scaledSize: new google.maps.Size(25, 25),
+            };
+
+            // Create a marker for each place.
+            markers.push(
+              new google.maps.Marker({
+                map: map,
+                icon: icon,
+                title: place.name,
+                position: place.geometry.location,
+              })
+            );
+
+            if (place.geometry.viewport) {
+              // Only geocodes have viewport.
+              bounds.union(place.geometry.viewport);
+            } else {
+              bounds.extend(place.geometry.location);
+            }
+          });
+          map.fitBounds(bounds);
+        });
       }
-    })
-  </script>
-  <script src="/javascripts/filter.js"></script>
-  <script src="/javascripts/cart.js"></script>
-</body>
 
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(
+          browserHasGeolocation
+            ? "Error: The Geolocation service failed."
+            : "Error: Your browser doesn't support geolocation."
+        );
+      }
 
+      // Input Date & time
+      var search_cars = document.getElementById("search_cars")
+      search_cars.addEventListener("click", function() {
+          var date_in = document.getElementById("date_in").value
+              // time_in = document.getElementById("time_in").value
+          var date_out = document.getElementById("date_out").value
+              // time_out = document.getElementById("time_out").value
 
-<footer class="footer bg-dark py-3 mt-auto">
-  <div class="container">
-    <span class="text-muted">&copf; Bhumi, Gopi & Vibhav 2022 </span>
-  </div>
-</footer>
+          // console.log(new Date(date_in + " " + time_in))
+          // console.log(new Date(date_out + " " + time_out))
+      })
 
+    </script>
+
+    <script src="/javascripts/filter.js"></script>
+    <script src="/javascripts/cart.js"></script>
+  </body>
+
+  <footer class="footer bg-dark py-3 mt-auto">
+    <div class="container">
+      <span class="text-muted">&copf; Bhumi, Gopi & Vibhav 2022 </span>
+    </div>
+  </footer>
 </html>

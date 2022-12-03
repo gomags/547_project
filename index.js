@@ -42,6 +42,112 @@ const dbUrl = "mongodb://" + config_var.host + ":" + config_var.port
 const DB = config_var.db
 const client = new MongoClient(dbUrl, config_var.opts)
 
+class User{
+  constructor(){
+    this.config_file = {
+      host: 'localhost',
+      port: 27017,
+      db: 'car_rental',
+      opts: {useUnifiedTopology: true}
+    }
+
+    this.uri = "mongodb://" + this.config_file.host + ":" + this.config_file.port
+    this.db = this.config_file.db
+    this.client = new MongoClient(this.uri, this.config_file.opts)
+  }
+
+  getUser(userId,callback){
+    // connect to database
+    this.client.connect((err,conn) => {
+        if(err)
+        {   // if error return error
+            callback(err,null)
+        }
+        else
+        {   // connect to database
+            let db = conn.db(this.db)
+            let collection = db.collection("user")
+            collection.find({"userId":userId}).toArray((err,result) =>{// find user with userId
+                if(err)
+                {   // if error return error
+                    conn.close()
+                    callback(err,null)
+                }
+                else
+                {   // if no error return player
+                    if(result.length>0)
+                    {   //close connection and return player
+                        conn.close()
+                        //console.log(result[0])
+                        callback(null,result[0])
+                    }
+                    else
+                    {   // if no player found return error
+                        conn.close()
+                        callback(true,"no records")
+                    }
+                }
+            })
+        }
+    })
+  }
+}
+
+
+class Product{
+  constructor(){
+    this.config_file = {
+      host: 'localhost',
+      port: 27017,
+      db: 'car_rental',
+      opts: {useUnifiedTopology: true}
+    }
+
+    this.uri = "mongodb://" + this.config_file.host + ":" + this.config_file.port
+    this.db = this.config_file.db
+    this.client = new MongoClient(this.uri, this.config_file.opts)
+  }
+
+  getProduct(productId,callback){
+    // connect to database
+    this.client.connect((err,conn) => {
+        if(err)
+        {   // if error return error
+            callback(err,null)
+        }
+        else
+        {   // connect to database
+            let db = conn.db(this.db)
+            let collection = db.collection("product")
+            collection.find({"productId":productId}).toArray((err,result) =>{// find product with productId
+                if(err)
+                {   // if error return error
+                    conn.close()
+                    callback(err,null)
+                }
+                else
+                {   // if no error return player
+                    if(result.length>0)
+                    {   //close connection and return player
+                        conn.close()
+                        //console.log(result[0])
+                        callback(null,result[0])
+                    }
+                    else
+                    {   // if no player found return error
+                        conn.close()
+                        callback(true,"no records")
+                    }
+                }
+            })
+        }
+    })
+  }
+}
+
+let userobj = new User()
+let prodobj = new Product()
+
 
 try {
   console.log('44')

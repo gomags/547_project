@@ -1,111 +1,259 @@
 "use strict";
 
 const UserModel = {
-  load: async (context, userId) => {
-    if (context.userCache[userId]) {
-      return context.userCache[userId];
-    }
 
-    const [rows, fields] = await context.db.query('SELECT * FROM user WHERE user_id = ?', [userId]);
-    
-    context.userCache[userId] = rows;
-    return rows;
+  load: async (context, userId) => {
+    let req_id = ObjectId(req.params.userId.toString())
+
+    userobj.getUser(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data
+        }
+    })
   },
 
   getName: async (context, { userId }) => {
-    const rows = await UserModel.load(context, userId);
-    return (rows.length === 0 ? null : rows[0].userName);
+    let req_id = ObjectId(req.params.userId.toString())
+
+    userobj.getUser(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.userName
+        }
+    })
   },
 
   getAccount: async (context, { userId }) => {
-    const rows = await UserModel.load(context, userId);
-    return (rows.length === 0 ? null : rows[0].account);
+    let req_id = ObjectId(req.params.userId.toString())
+
+    userobj.getUser(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.account
+        }
+    })
   },
 
   getPassword: async (context, { userId }) => {
-    const rows = await UserModel.load(context, userId);
-    return (rows.length === 0 ? null : rows[0].pass);
+    let req_id = ObjectId(req.params.userId.toString())
+
+    userobj.getUser(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.pass
+        }
+    })
   },
 
   getEmail: async (context, { userId }) => {
-    const rows = await UserModel.load(context, userId);
-    return (rows.length === 0 ? null : rows[0].email);
+    let req_id = ObjectId(req.params.userId.toString())
+
+    userobj.getUser(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.email
+        }
+    })
   }
 
  
 }
 
 const ProductModel = {
+  // load: async (context, productId) => {
+  //   if (context.userCache[productId]) {
+  //     return context.productCache[productId];
+  //   }
+  //   const [rows, fields] = await context.db.query('SELECT * FROM product WHERE product_id = ?', [productId]);
+  //   context.productCache[productId] = rows;
+  //   return rows;
+  // },
+
   load: async (context, productId) => {
-    if (context.userCache[productId]) {
-      return context.productCache[productId];
-    }
-    const [rows, fields] = await context.db.query('SELECT * FROM product WHERE product_id = ?', [productId]);
-    context.productCache[productId] = rows;
-    return rows;
+    let req_id = ObjectId(req.params.productId.toString())
+
+    prodobj.getUser(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data
+        }
+    })
   },
 
   getName: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].productName);
+    let req_id = ObjectId(req.params.productId.toString())
+
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.productName
+        }
+    })
   },
+
   getPrice: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].price);
+    let req_id = ObjectId(req.params.productId.toString())
+
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.price
+        }
+    })
   },
 
   getLocation: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].location);
-  },
+    let req_id = ObjectId(req.params.productId.toString())
 
-  getStartDate: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].startDate);
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.location
+        }
+    })
   },
-
-  getEndtDate: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].endDate);
-  },
-
-  getCapacity: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].capacity);
-  },
-
 
   getSeller: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
+    let req_id = ObjectId(req.params.productId.toString())
 
-    return (rows.length === 0 ? null : { userId: rows[0].seller });
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.seller
+        }
+    })
   },
   
   getCategory: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].category);
+    let req_id = ObjectId(req.params.productId.toString())
+
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.category
+        }
+    })
   },
-  getBoughtDate: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].boughtDate);
+
+  getStartDate: async (context, { productId }) => {
+    let req_id = ObjectId(req.params.productId.toString())
+
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.startDate
+        }
+    })
   },
+
+  getEndDate: async (context, { productId }) => {
+    let req_id = ObjectId(req.params.productId.toString())
+
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.endDate
+        }
+    })
+  },
+
+  getCapacity: async (context, { productId }) => {
+    let req_id = ObjectId(req.params.productId.toString())
+
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.capacity
+        }
+    })
+  },
+
   getProductPhoto: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].product_photo);
+    let req_id = ObjectId(req.params.productId.toString())
+
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.product_photo
+        }
+    })
   },
-  getLookLike: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].look_like);
-  },
-  getNumberOfProduct: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].numberOfProduct);
-  },
+
   getDescript: async (context, { productId }) => {
-    const rows = await ProductModel.load(context, productId);
-    return (rows.length === 0 ? null : rows[0].descript);
-  }
-  
+    let req_id = ObjectId(req.params.productId.toString())
+
+    prodobj.getProduct(req_id,(err,data) =>{
+        if(err)
+        { 
+          return null  
+        }
+        else
+        {   
+          return data.descript
+        }
+    })
+  },
 
 }
 

@@ -1,5 +1,20 @@
 "use strict";
 
+const graphql = require("graphql");
+const { PossibleFragmentSpreadsRule, GraphQLObjectType, GraphQLString,
+        GraphQLID, GraphQLInt, GraphQLSchema } = graphql;
+const { ObjectId } = require("mongodb");
+
+const ProductType = new GraphQLObjectType({
+  name: 'Product',
+  fields: () => ({
+      id: { type: GraphQLID  },
+      name: { type: GraphQLString },
+      pages: { type: GraphQLInt }
+  })
+});
+
+
 const UserModel = {
   load: async (context, userId) => {
     if (context.userCache[userId]) {
@@ -143,14 +158,38 @@ const resolvers = {
     },
     users: async (_, { limit = 20, offset = 0, sort = 'ASC' }, context) => {
       const rows = await context.db.collection('users').find({})
-      return rows;
+      return rows[0];
     },
-    product: async (_, { carId }, context) => {
-      const rows = await context.db.collection('product').find(ObjectId(carId))
+    product: async (_, { productId }, context) => {
+      console.log(productId)
+      const rows = await context.db.collection('product').find(ObjectId(productId)).toArray()
+
+      console.log(rows)
       return (rows.length > 0 ? { carId: rows[0].carId } : null);
     },
     products: async (_, { limit = 20, offset = 0, sort = 'ASC' }, context) => {
-      const rows = await context.db.collection('product').find({})
+      // return await context.db.collection('product').find()
+      //       .then (prod => {
+      //           return prod.map (r => ({ ...r._doc }))
+      //       })
+      //       .catch (err => {
+      //           console.error(err)
+      //       })
+      const rows = await context.db.collection('product').find({}).toArray()
+      // var res = {
+      //   manufacturer: 5, 
+      //   vehicleType:6,
+      //   capacity:7,
+      //   transmissionStyle: 8
+      // }
+      
+      for(let i=0;i<rows.length;i++) {
+        rows[i]['carId'] = rows[i]['_id']
+        delete rows[i]._id
+      }
+
+      console.log(rows)
+
       return rows;
     },
     history: async (_, { historyId }, context) => {

@@ -29,6 +29,7 @@ const MongoDBStore = require("connect-mongo")(session);
 const {MongoClient, ObjectId} = require('mongodb')
 
 let LookupVehicle = require('lookup_vehicle');
+// const DataLoader = require('dataloader');
 // const NodeGeocoder = require('node-geocoder');
 
 // const options = {
@@ -55,12 +56,18 @@ const client = new MongoClient(dbUrl, config_var.opts)
 
 
 try {
-  console.log('44')
   client.connect().then(() => console.log("Connected to db"))
 }
 catch(err){
   console.log(err)
 }
+
+var db = null
+  client.connect((err,conn) => {
+    if(!err) {
+        db = conn.db(DB)
+    }
+  })
 
 // client.connect((err, conn) => {
 //   if (!err) {
@@ -158,6 +165,32 @@ const { assertResolversPresent, makeExecutableSchema } = require('@graphql-tools
 const typeDefs = readFileSync('./schema.graphql').toString('utf-8')
 const resolvers = require('./resolvers');
 
+async function getProductsGQ(db, keys) {
+  try{
+    // console.log(keys)
+    const docs = await db.collection('player').find({"_id": {$in: keys}}).toArray();
+    let out_list = [];
+    for(let i = 0; i < docs.length; i++) {
+      const player_doc = docs[i];
+      const out = await _formatPlayer(player_doc);
+      out_list.push(out);
+    }
+    // console.log(out_list)
+    keys.forEach((element, index) => {
+      keys[index] = element.toString();
+    });
+    if(out_list.length > 1) {out_list.sort((a, b) => (a.name > b.name) ? 1 : -1);}
+    // return out_list;
+    const results = out_list.reduce((acc, row) => {
+      acc[row.pid] = row;
+      return acc;
+    }, {});
+    return keys.map(key => results[key] || new Error(`player ${key} does not exist `));
+  }catch(err){
+    console.log(err)
+  }
+}
+
 const schema = makeExecutableSchema({
   resolvers,
   resolverValidationOptions: {
@@ -166,20 +199,75 @@ const schema = makeExecutableSchema({
   },
   typeDefs
 });
+const graphql = require("graphql");
+const { PossibleFragmentSpreadsRule, GraphQLObjectType, GraphQLString,
+  GraphQLID, GraphQLInt, GraphQLSchema, GraphQLList } = graphql;
 
 app.use('/graphql', graphqlHTTP(async (req) => {
+
+    // console.log('graphql')
     return {
-      schema,
+      schema: new GraphQLSchema({
+        query: RootQuery
+     }),
       graphiql: true,
       context: {
         req,
-        db: await connection.promise(),
+        db: db,
         userCache: {},
         productCache: {},
         historyCache: {}
       }
     };
   }));
+  
+
+// const { ObjectId } = require("mongodb");
+
+const ProductType = new GraphQLObjectType({
+    name: 'Product',
+    fields: () => ({
+      owner: {type: GraphQLID},
+      carName:          {type: GraphQLString},
+      manufacturer:     {type: GraphQLString},
+      vehicleType:{type: GraphQLString},
+      capacity:{type: GraphQLString},
+      transmissionStyle:{type: GraphQLString},
+      price:{type: GraphQLInt},
+      car_photo:{type: new GraphQLList(GraphQLString)},
+      car_dates:{type: new GraphQLList(GraphQLString)},
+      look_like:{type: GraphQLString},
+      coord:{type: GraphQLString},
+      descript:{type: GraphQLString}
+    })  
+});
+
+const RootQuery = new GraphQLObjectType({
+  name: 'RootQueryType',
+  fields: {
+      product: {
+          type: ProductType,
+          //argument passed by the user while making the query
+          args: { id: { type: GraphQLID } },
+          async resolve(parent, args) {
+              //Here we define how to get data from a database source
+              const rows = await db.collection('product').findOne({'_id': ObjectId(args.id)})
+
+              // console.log(rows)
+              //this will return the book with id passed in argument by the user
+              return rows;
+          }
+      },
+      products: {
+        type: new GraphQLList(ProductType),
+           async resolve(parent, args) {
+            const rows = await db.collection('product').find({}).toArray()
+              // console.log(rows[0].car_photo[0])
+              return rows
+           }
+      }
+  }
+});
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -228,9 +316,16 @@ app.post('/products/new', upload.array('product_photo', 5), async (req, res, nex
             callback(err,null)
           }
           else {
+            var files_path = []
             for (var i =0; i<req.files.length;i++) {
-              files_path +=  `${req.files[i].path};`
+              files_path.push(req.files[i].path)
             }
+            // if (req.files.length > 1) {
+              
+            // } else {
+            //   files_path = req.files[0].path
+            // }
+            
             var car_dates = getDatesInRange(req.body.car_date_in, req.body.car_date_out)
             let db = conn.db(DB)
             let collection = db.collection("product")

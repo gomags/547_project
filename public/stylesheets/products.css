@@ -282,3 +282,14 @@ body {
 #map {
   margin: 10px;
 }
+
+.animal_list{
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.car_price {
+  border:1px solid white;
+  /* position:fixed; */
+}

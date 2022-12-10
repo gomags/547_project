@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "dataloader": "^2.1.0",
     "lookup_vehicle": "^1.0.1"
   }
 }

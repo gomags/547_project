@@ -89,11 +89,11 @@
             <a class="nav-link" href="/login">Login</a>
             <a class="nav-link" href="/register">Register</a>
             <% } else { %>
-            <p id="cartNum" style="color: aquamarine">0</p>
-            <i
+            <!-- <p id="cartNum" style="color: aquamarine">0</p> -->
+            <!-- <i
               class="iconShopping fa fa-shopping-cart fa-2x fa-fw"
               style="color: aquamarine"
-            ></i>
+            ></i> -->
             <a class="nav-link" href="/profile">Profile</a>
             <a id="logout" class="nav-link" href="/logout">Logout</a>
             <% } %>
@@ -124,12 +124,14 @@
     </div>
     <% } %>
 
-    <!-- <div class="column project-0"></div> -->
+    <div style="overflow: hidden">
 
-    <div style="overflow: hidden;">
-      <!-- <div class="column project-1"></div> -->
-
-      <div class="search-container">
+      <script
+        async
+        defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk-spvVNSgJWusP6KkVI-EYat2TpMJgYQ&libraries=places&signed_in=true&callback=initMap"
+      ></script>
+      <div class="search-container" id="content">
         <div class="search-results">
           <div>
             <input
@@ -137,155 +139,113 @@
               class="controls"
               type="text"
               placeholder="Location"
-              style="width: 90%;"
+              style="width: 90%"
             />
-            <!-- <button type="button" onclick={initMap()}>show</button> -->
-
-            <script
-              async
-              defer
-              src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk-spvVNSgJWusP6KkVI-EYat2TpMJgYQ&libraries=places&signed_in=true&callback=initMap"
-            ></script>
           </div>
 
-          <!-- <div class="container">
-            <div class="row" id="content">
-              <div v-for="(product, idx) in productList" style="text-align: center;"
-                class="store-product col-lg-3 col-md-4 col-6 item" v-bind:class="product.category">
-                <div>
-                  <a :href="'/products/new/'+product.productId">
-                    <img v-if="product.product_photo" :src="product.product_photo" />
-                    <img v-else src="/stylesheets/image/Bee.jpg" />
-                  </a>
-                </div>
-                <div style="color: bisque; ">
-                  {{product.productName}}
-                </div>
+          <div style="overflow: scroll; height: 100vh">
+            <div
+              v-for="(product, idx) in productList"
+              style="text-align: center"
+              class="column project-2"
+              v-bind:class="product.category"
+            >
+              <div style="color: grey" style="text-align: left">
+                <h4>{{ product.carName }}</h4>
+                <h6 id="car_coord" hidden> {{ product.coord }} </h6>
               </div>
-            </div>
-          </div>
-        </div> -->
-
-          <!-- <div class="container">
-            <div class="row" id="content">
-              <div v-for="(product, idx) in productList" style="text-align: center;"
-                class="column project-2" v-bind:class="product.category">
-                <div>
-                  <a :href="'/products/new/'+product.productId">
-                    <img v-if="product.product_photo" :src="product.product_photo" />
-                    <img v-else src="/stylesheets/image/Bee.jpg" />
-                  </a>
-                </div>
-                <div style="color: bisque; ">
-                  {{product.productName}}
-                </div>
-              </div>
-            </div>
-          </div> -->
-        <!-- </div> -->
-
-        <!-- <div class="column project-2">
-              <h2 class="project-text">WEB <br />DESIGN</h2>
-              
-            </div>
-
-            <div class="column project-3">
-              <h2 class="project-text">CHAT <br />BOTS</h2>
-            </div>
-
-            <div class="column project-4">
-              <h2 class="project-text">
-                GAME <br />
-                DESIGN
-              </h2>
-            </div>
-
-            <div class="column project-5">
-              <h2 class="project-text">
-                TEXT <br />
-                ANALYSIS
-              </h2>
-            </div>
-
-            <div class="column project-6">
-              <h2 class="project-text">
-                JAVA <br />
-                SCRIPT
-              </h2>
-            </div>
-
-            <div class="column project-7">
-              <h2 class="project-text">
-                DATA <br />
-                PRIVACY
-              </h2>
-            </div> -->
-
-        <!-- <div style="color: bisque; " id="test"></div> -->
-        
-          <div style="overflow: scroll; height: 100vh;" id="content">
-
-            <div v-for="(product, idx) in productList" style="text-align: center;"
-              class="column project-2" v-bind:class="product.category">
-              <div style="color: grey" style="text-align: left;">
-                <h4> {{ product.carName }} </h4>
-              </div>
-              <div class="animal_list"  style="height:42px;width:42px">
+              <div class="animal_list" style="height: 42px; width: 42px">
                 <template v-for="pic in product.car_photo">
-                <a :href="'/products/new/'+product.carId">
-                  <!-- <img v-if="product.car_photo[0]" :src=product.car_photo[0] /> -->
-                  <img v-if="pic" :src= "pic" style="width: 100px; height:100px;"/>
-                </a>
-              </template>
+                  <a :href="'/products/new/'+product._id">
+                    <img
+                      v-if="pic"
+                      :src="pic"
+                      style="width: 100px; height: 100px"
+                    />
+                  </a>
+                </template>
               </div>
 
-              <div class="car_price" style="background-color:#000000;width:100px;height:100px;text-align:center;padding:25px;margin:0px left; float:rigth;"> 
-                <h5 style="color:white;">Price</h5>
-                <h6 style="color:white;">{{ product.price }}</h6> 
+              <div
+                class="car_price"
+                style="
+                  background-color: #000000;
+                  width: 100px;
+                  height: 100px;
+                  text-align: center;
+                  padding: 25px;
+                  margin: 0px left;
+                  float: rigth;
+                "
+              >
+                <h5 style="color: white">Price</h5>
+                <h6 style="color: white">{{ product.price }}</h6>
               </div>
-              
             </div>
-            
+
             <input type="text" id="search_latlng" name="search_latlng" hidden/>
-          </div>  
+          </div>
         </div>
         <div class="map-container">
-          
-            From:<input id="search_date_in" type="date" name="search_date_in" />
-            <!-- <input id="time_in" type="time" name="task_time" /> -->
-            To:<input id="search_date_out" type="date" name="search_date_out" />
-            <!-- <input id="time_out" type="time" name="task_time" /> -->
-            <button id="search_cars" name="search_cars">   Search</button>
-
+          <label for="start" style="color: azure">Start date:</label>
+          <input
+            id="search_date_in"
+            type="date"
+            name="search_date_in"
+            required
+          />
+          <label for="start" style="color: azure">End date:</label>
+          <input
+            id="search_date_out"
+            type="date"
+            name="search_date_out"
+            required
+          />
+          <button
+            class="button-34"
+            id="search_cars"
+            name="search_cars"
+            v-on:click="getList();"
+          >
+            Find Cars
+          </button>
           <div id="map"></div>
         </div>
       </div>
     </div>
 
-
     <script>
       const va = new Vue({
         el: "#content",
-      // export default {
+        // export default {
         data: {
           // return {
-            errorMsg: "err",
-            isEditing: {},
-            productList: [],
+          errorMsg: "err",
+          isEditing: {},
+          productList: [],
+          markers: [],
+          map: null,
           // }
         },
         created() {
-          this.load();
+          // this.load();
         },
         methods: {
-          async load() {
+          async getList() {
+            const ll = document.getElementById("search_latlng").value.split(":");
+            const startDate_gql = document.getElementById("search_date_in").value;
+            const endDate_gql = document.getElementById("search_date_out").value;
+
+            console.log(ll);
             fetch("/graphql", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                query: `
+                query:
+                  `
           query {
-              products {
+              products(coord:[` + ll[0] + "," + ll[1] +`], startDate: "` + startDate_gql + `", endDate: "`+ endDate_gql +`") {
+                _id
                 owner
                 carName
                 manufacturer
@@ -307,90 +267,88 @@
                 return r;
               })
               .then((r) => r.json())
-              .then((r) =>{
-                // r.data.products.car_photo = r.data.products.car_photo.slice(0, -1)
-                (this.productList = r.data.products)
-                // document.getElementById('test').innerHTML = this.productList[0]
-                // document.getElementById('test').innerHTML = r.data.products.carName
-              } )
+              .then((r) => {
+                this.productList = r.data.products;
+                let map = new google.maps.Map(document.getElementById("map"), {
+                    center: { lat: 34.0224, lng: -118.2851 },
+                    zoom: 13,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                  });
+                for(let i of this.productList){
+                  console.log(i)
+                  const marker = {
+                    lng: i.coord[0],
+                    lat: i.coord[1],
+                  };
+                  console.log(marker);
+                  new google.maps.Marker({ position: marker, map, title: i.carName });
+                }
+              })
               .catch(this.flash);
-          },
+
+            
+          }
         }
       });
 
-
       // Location search
       function initMap() {
-        var map = new google.maps.Map(document.getElementById("map"), {
+        this.map = new google.maps.Map(document.getElementById("map"), {
           center: { lat: 34.0224, lng: -118.2851 },
-          zoom: 6,
+          zoom: 13,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
         });
-        // var infoWindow = new google.maps.InfoWindow({ map: map });
 
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             function (position) {
+              console.log(position)
               var pos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
               };
 
               const geocoder = new google.maps.Geocoder();
+              geocoder.geocode({ location: pos }).then((response) => {
+                var place = response.results[0].formatted_address;
+                document.getElementById("pac-input").value = place;
+              });
+              document.getElementById("search_latlng").value = pos.lng + ":" + pos.lat;
+              this.map.setCenter(pos);
 
-              geocoder
-              .geocode({ location: pos })
-              .then((response) => {
-                  // console.log(response)
-                  var place =response.results[0].formatted_address;
-                  document.getElementById('pac-input').value = place;
-              })
-
-              document.getElementById('search_latlng').value = pos.lat + ":" + pos.lng;
-
-              map.setCenter(pos);
+              const marker = {
+                  lng: pos.lng,
+                  lat: pos.lat,
+                };
+              console.log(marker);
+              new google.maps.Marker({ position: marker, map });
             },
             function () {
-              handleLocationError(true, infoWindow, map.getCenter());
+              handleLocationError(true, infoWindow,  this.map.getCenter());
             }
           );
         } else {
-          // Browser doesn't support Geolocation
-          handleLocationError(false, infoWindow, map.getCenter());
+          handleLocationError(false, infoWindow,  this.map.getCenter());
         }
 
-        // Create the search box and link it to the UI element.
         var input = document.getElementById("pac-input");
+        var car_coord = document.getElementById("car_coord");
         var searchBox = new google.maps.places.SearchBox(input);
-        // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-        // console.log(map.geometry.location.lat())
 
-        // Bias the SearchBox results towards current map's viewport.
-        map.addListener("bounds_changed", function () {
-          // console.log("bounds changed");
+        this.map.addListener("bounds_changed", function () {
           searchBox.setBounds(map.getBounds());
         });
 
-        var markers = [];
-        // Listen for the event fired when the user selects a prediction and retrieve
-        // more details for that place.
         searchBox.addListener("places_changed", function () {
-          // console.log("search box  places changed");
           var places = searchBox.getPlaces();
-
+          
           if (places.length == 0) {
             return;
           }
 
-          // Clear out the old markers.
-          markers.forEach(function (marker) {
-            marker.setMap(null);
-          });
-          markers = [];
-
-          // For each place, get the icon, name and location.
           var bounds = new google.maps.LatLngBounds();
           places.forEach(function (place) {
+            // document.getElementById("search_latlng").value = place.geometry.location.lng() + ":" + place.geometry.location.lat();
             var icon = {
               url: place.icon,
               size: new google.maps.Size(71, 71),
@@ -399,24 +357,28 @@
               scaledSize: new google.maps.Size(25, 25),
             };
 
-            // Create a marker for each place.
-            markers.push(
+            console.log(place.geometry.location)
+            // markers.push(
               new google.maps.Marker({
-                map: map,
+                map:  map,
                 icon: icon,
                 title: place.name,
                 position: place.geometry.location,
+                animation: google.maps.Animation.DROP,
               })
-            );
+            // );
 
             if (place.geometry.viewport) {
-              // Only geocodes have viewport.
               bounds.union(place.geometry.viewport);
             } else {
               bounds.extend(place.geometry.location);
             }
+
           });
           map.fitBounds(bounds);
+          searchBox.set('map',  map);
+          map.setZoom(Math.min( map.getZoom(),12))
+          document.getElementById("search_latlng").value = place.geometry.location.lng() + ":" + place.geometry.location.lat();
         });
       }
 
@@ -428,14 +390,15 @@
             : "Error: Your browser doesn't support geolocation."
         );
       }
-
+      window.initMap = initMap;
       // Input Date & time
-      var search_cars = document.getElementById("search_cars")
-      search_cars.addEventListener("click", function() {
-          var date_in = document.getElementById("date_in").value
-          var date_out = document.getElementById("date_out").value
-      })
+      var search_cars = document.getElementById("search_cars");
+      search_cars.addEventListener("click", function () {
 
+        var date_in = document.getElementById("search_date_in").value;
+        var date_out = document.getElementById("search_date_out").value;
+
+      });
     </script>
     <script src="/javascripts/filter.js"></script>
     <script src="/javascripts/cart.js"></script>
@@ -446,6 +409,4 @@
       <span class="text-muted">&copf; Bhumi, Gopi & Vibhav 2022 </span>
     </div>
   </footer>
-
-  
 </html>

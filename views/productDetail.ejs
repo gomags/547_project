@@ -22,9 +22,7 @@
       let items = [];
       JSON.parse(localStorage.getItem('items')).map(data => {
         if (data.productId != e.parentElement.parentElement.children[0].textContent) {
-
           items.push(data);
-
         }
         else {
           if (data.number - 1 != 0) {
@@ -41,6 +39,7 @@
 </head>
 
 <body class="d-flex flex-column vh-100">
+  
   <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="/home">Community Car Rentals</a>
@@ -60,8 +59,8 @@
           <a class="nav-link" href="/login">Login</a>
           <a class="nav-link" href="/register">Register</a>
           <% } else { %>
-          <p id="cartNum" style="color: aquamarine;">0</p>
-          <i class="iconShopping fa fa-shopping-cart fa-2x fa-fw" style="color: aquamarine;"></i>
+          <!-- <p id="cartNum" style="color: aquamarine;">0</p> -->
+          <!-- <i class="iconShopping fa fa-shopping-cart fa-2x fa-fw" style="color: aquamarine;"></i> -->
           <a class="nav-link" href="/profile">Profile</a>
           <a id="logout" class="nav-link" href="/logout">Logout</a>
           <% } %>
@@ -73,33 +72,37 @@
     </div>
   </nav>
   <main class="container mt-5">
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk-spvVNSgJWusP6KkVI-EYat2TpMJgYQ&libraries=places&signed_in=true&callback=initMap">
+    </script>
+    <div id="map" hidden></div>
     <div id="content" class="row">
-      <div class="col-6 ">
-
-        <img :src="productList.product_photo" class="d-block w-100" alt="">
-
+      
+      <div v-for="pic in productList.car_photo" class="col-6 ">
+        <img :src="pic" class="d-block w-100" alt="">
       </div>
       <div class="col-6 ">
         <div class="card mb-3">
-
           <div class="card-body">
-            <h5 class="card-title">{{productList.productName}}</h5>
+            <h5 class="card-title">{{productList.carName}}</h5>
             <p class="card-text"> {{productList.descript}} </p>
           </div>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item text-muted">Sold by {{productList.seller.userName}} </li>
+            <!-- <li class="list-group-item text-muted">Sold by {{productList.seller.userName}} </li> -->
             <li class="list-group-item">Price: $ {{productList.price}}</li>
             <li class="list-group-item">Appearance: {{productList.look_like}}</li>
-            <li class="list-group-item">Remain: {{productList.numberOfProduct}} piece(s)</li>
-            <li class="list-group-item">Bought At: {{productList.boughtDate}}</li>
+            <li class="list-group-item"> Location: {{productList.location}}</li>
+            <li class="list-group-item">Capacity: {{productList.capacity}}</li>
+            <li class="list-group-item">Type: {{productList.vehicleType}}</li>
+            <li class="list-group-item">Transmission Style: {{productList.transmissionStyle}}</li>
+            <li class="list-group-item">Manufacturer: {{productList.manufacturer}}</li>
+            <li class="list-group-item">Dates Available: {{dates_formatted}}</li>
             <% if(currentUser) {%>
             <li class="list-group-item">
-              <button class="addToCart" @click="add();"> Add To Cart </button>
+              <button class="addToCart" @click="add();"> Reserve Now </button>
             </li>
             <% } %>
-
           </ul>
-
         </div>
       </div>
     </div>
@@ -130,19 +133,19 @@
         <button class="btn btn-info" style="float:right" @click="pay();"> Buy Them All</button>
       </div>
     </div>
-
-
   </main>
-
   <footer class="footer bg-dark py-3 mt-auto">
     <div class="container">
       <span class="text-muted">&copf; Bhumi, Gopi & Vibhav 2022 </span>
     </div>
   </footer>
 
+  <script type="text/javascript">
+    
+  </script>
+
   <script type="application/javascript">
     const currentURL = window.location.pathname
-
     const product_id = currentURL.split('/')[3]
 
     const va = new Vue({
@@ -150,32 +153,35 @@
       data: {
         errorMsg: '',
         isEditing: {},
-        productList: []
+        productList: [],
+        dates_formatted: []
       },
       created() {
         this.load();
       },
       methods: {
-        load() {
+        async load() {
           fetch('/graphql', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               query: `
                 query {
-                  product(productId:"`+ product_id + `") {
-                        productName
-                        productId
-                        price
-                        product_photo
-                        look_like
-                        numberOfProduct
-                        boughtDate
-                        descript
-                        seller {
-                          userName
-                        }
-                    }
+                  product(productId:"`+product_id+`") {
+                    _id
+                    owner
+                    carName
+                    manufacturer
+                    vehicleType
+                    capacity
+                    transmissionStyle
+                    price
+                    car_photo
+                    car_dates
+                    look_like
+                    coord
+                    descript
+                  }
                 }
                 `
             })
@@ -184,114 +190,46 @@
               if (!r.ok) throw new Error(await r.text());
               return r;
             })
-            .then(r => r.json())
-            .then(r => (this.productList = r.data.product))
-            .catch(this.flash)
-        },
-        add() {
-          let items = [];
-          let item = {
-            productName: this.productList.productName,
-            productId: this.productList.productId,
-            price: this.productList.price,
-            sellerName: this.productList.seller.userName,
-            number: 1
-          };
+            .then(r => {
+              return r.json()})
+            .then((r) => {
+              
+              var geocoder = new google.maps.Geocoder();
+              var latlng_in = r.data.product.coord;
+              var latlng = new google.maps.LatLng(parseFloat(latlng_in[1]), parseFloat(latlng_in[0]));
 
-          if (JSON.parse(localStorage.getItem('items')) === null) {
-            items.push(item);
-            localStorage.setItem("items", JSON.stringify(items));
-            window.location.reload();
-          } else {
-            const localItems = JSON.parse(localStorage.getItem("items"));
-            localItems.map(data => {
-              if (item.productId == data.productId) {
-                //  our puchase number cannot exceed the sell number
-                if (data.number < this.productList.numberOfProduct) {
-                  item.number = data.number + 1;
+              geocoder.geocode({ location: latlng }).then((response) => {
+                var place = response.results[0].formatted_address;
+                this.productList = r.data.product;
+                this.productList.location = place;
+                for (let i of this.productList.car_dates){
+                  this.dates_formatted.push(i.slice(0,10))
                 }
-                else {
-                  item.number = data.number
-                }
-              } else {
-                items.push(data);
-              }
-            });
-            items.push(item);
-            localStorage.setItem('items', JSON.stringify(items));
-            window.location.reload();
-          }
+                this.dates_formatted = JSON.stringify(this.dates_formatted)
+              });
+
+              
+              
+            })
+            .catch(this.flash)
         }
       }
     })
 
+    // google api fucntion
+    function initMap(){
+      console.log("init map")
+      // console.log(':', document.getElementById("product_coord0"))
+      // var latlng_in = parseFloat(document.getElementById("product_coord0").value);
+      // console.log(latlng_in)
+      // var latlng = new google.maps.LatLng(parseFloat(latlng_in[1]), parseFloat(latlng_in[0]));
+      // var geocoder = new google.maps.Geocoder();
+      // geocoder.geocode({ location: latlng }).then((response) => {
+      //   var place = response.results[0].formatted_address;
+      //   // document.getElementById("product_location").value = place;
+      // });
+    }
 
-    const newVa = new Vue({
-      el: '#cont',
-      data: {
-        errorMsg: '',
-        isEditing: {},
-        productList: []
-      },
-      created() {
-        this.load();
-      },
-      methods: {
-        load() {
-          fetch('/graphql', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              query: `
-                query {
-                  product(productId:"`+ product_id + `") {
-                        productName
-                        productId
-                        price
-                        product_photo
-                        look_like
-                        numberOfProduct
-                        boughtDate
-                        descript
-                        seller {
-                          userName
-                        }
-                    }
-                }
-                `
-            })
-          })
-            .then(async r => {
-              if (!r.ok) throw new Error(await r.text());
-              return r;
-            })
-            .then(r => r.json())
-            .then(r => (this.productList = r.data.product))
-            .catch(this.flash)
-        },
-        pay() {
-          const localItems = localStorage.getItem("items");
-          const opts = {
-            method: 'POST',
-            body: localItems,
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          };
-
-          return fetch('/cart', opts)
-            .then(async r => {
-              if (!r.ok) throw new Error(await r.text());
-              return r;
-            })
-            .then(localStorage.removeItem('items'))
-            .then(this.load)
-            .then(window.location.reload())
-            .catch(this.flash)
-
-        }
-      }
-    })
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
     integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU"
@@ -299,15 +237,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"
     integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj"
     crossorigin="anonymous"></script>
-  <!-- ref: https://v5.getbootstrap.com/docs/5.0/forms/validation/ -->
   <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
-  <!-- <script src="/javascripts/validateForm.js"></script> -->
-  <script src="/javascripts/cart.js"></script>
-
+  <!-- <script src="/javascripts/cart.js"></script> -->
 </body>
-
-
-
-
-
 </html>

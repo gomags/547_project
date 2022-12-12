@@ -13,6 +13,7 @@
     "graphql": "^15.8.0",
     "graphql-playground-middleware-express": "^1.7.23",
     "lodash": "^4.17.21",
+    "lookup_vehicle": "^1.0.1",
     "moment": "^2.29.1",
     "mongodb": "^4.1.2",
     "mongoose": "^6.8.0",

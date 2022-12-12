@@ -456,5 +456,14 @@ app.get("/profile", (req, res, next) => {
 
 app.use("/", userRoutes);
 
-app.listen(3000);
-console.log("GraphQL API server running at http://localhost:3000/graphql");
+// app.listen(3000);
+// console.log("GraphQL API server running at http://localhost:3000/graphql");
+if (module === require.main) {
+  const PORT = parseInt(process.env.PORT) || 8080;
+  app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
+    console.log('Press Ctrl+C to quit.');
+  });
+}
+
+module.exports = app

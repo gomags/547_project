@@ -1,6 +1,6 @@
 var mongoose=require("mongoose");
 var passportlocalmongoose=require("passport-local-mongoose");
-const dbUrl = "mongodb+srv://admin1:admin1@cluster0.cirpcyl.mongodb.net";
+const dbUrl = "mongodb+srv://ccr_app:ccr_app@cluster0.vo5vzvs.mongodb.net";
 mongoose.connect(dbUrl, {  
     useUnifiedTopology: true,
 });

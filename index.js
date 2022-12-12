@@ -51,7 +51,7 @@ var config_var = {
 };
 
 // const dbUrl = "mongodb://" + config_var.host + ":" + config_var.port;
-const dbUrl = "mongodb+srv://admin1:admin1@cluster0.cirpcyl.mongodb.net"
+const dbUrl = "mongodb+srv://ccr_app:ccr_app@cluster0.vo5vzvs.mongodb.net"
 
 const DB = config_var.db;
 const client = new MongoClient(dbUrl, {

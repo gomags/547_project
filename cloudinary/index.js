@@ -14,7 +14,7 @@ const storage = new CloudinaryStorage({
     cloudinary,
     params: {
         // folder in cloudinary
-        folder: 'MovingSale',
+        folder: '547_project',
         allowedFormats: ['jpeg', 'png', 'jpg']
     }
 

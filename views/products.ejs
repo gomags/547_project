@@ -90,15 +90,9 @@
             <a class="nav-link" href="/login">Login</a>
             <a class="nav-link" href="/register">Register</a>
             <% } else { %>
-            <!-- <p id="cartNum" style="color: aquamarine">0</p> -->
-            <!-- <i
-              class="iconShopping fa fa-shopping-cart fa-2x fa-fw"
-              style="color: aquamarine"
-            ></i> -->
             <a class="nav-link" href="/profile">Profile</a>
             <a id="logout" class="nav-link" href="/logout">Logout</a>
             <% } %>
-            <a class="nav-link" href="/about">About</a>
           </div>
         </div>
       </div>
@@ -144,7 +138,7 @@
             />
           </div>
 
-          <div style="overflow: scroll; height: 100vh">
+          <div style="overflow: scroll; height: 100vh; margin-top: 10px;">
             <div
               v-for="(product, idx) in productList"
               style="text-align: center"
@@ -165,9 +159,24 @@
                     />
                   </a>
                 </template>
+                <div
+                class="car_price"
+                style="
+                  background-color: #000000;
+                  width: 100px;
+                  height: 100px;
+                  text-align: center;
+                  padding: 25px;
+                  margin: 0px left;
+                  float: rigth;
+                "
+              >
+                <h5 style="color: white">Price</h5>
+                <h6 style="color: white">${{ product.price }}</h6>
+              </div>
               </div>
 
-              <div
+              <!-- <div
                 class="car_price"
                 style="
                   background-color: #000000;
@@ -181,18 +190,19 @@
               >
                 <h5 style="color: white">Price</h5>
                 <h6 style="color: white">{{ product.price }}</h6>
-              </div>
+              </div> -->
             </div>
 
             <input type="text" id="search_latlng" name="search_latlng" hidden/>
           </div>
         </div>
         <div class="map-container">
-          <label for="start" style="color: azure">Start date:</label>
+          <label for="start" style="color: azure; ">Start date:</label>
           <input
             id="search_date_in"
             type="date"
             name="search_date_in"
+            style="margin-top: -10px;"
             required
           />
           <label for="start" style="color: azure">End date:</label>
@@ -272,7 +282,7 @@
                 this.productList = r.data.products;
                 let map = new google.maps.Map(document.getElementById("map"), {
                     center: { lat: 34.0224, lng: -118.2851 },
-                    zoom: 13,
+                    zoom: 10,
                     mapTypeId: google.maps.MapTypeId.ROADMAP,
                   });
                 for(let i of this.productList){
@@ -296,7 +306,7 @@
       function initMap() {
         this.map = new google.maps.Map(document.getElementById("map"), {
           center: { lat: 34.0224, lng: -118.2851 },
-          zoom: 13,
+          zoom: 10,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
         });
 
@@ -401,8 +411,6 @@
 
       });
     </script>
-    <script src="/javascripts/filter.js"></script>
-    <script src="/javascripts/cart.js"></script>
   </body>
 
   <footer class="footer bg-dark py-3 mt-auto">

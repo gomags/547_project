@@ -280,7 +280,7 @@ body {
 }
 
 #map {
-  margin: 10px;
+  margin: 5px;
 }
 
 .animal_list{
@@ -319,4 +319,6 @@ body {
   width: fit-content;
   word-break: break-word;
   border: 0;
+  padding-bottom: 4px;
+  padding-top: 4px;
 }

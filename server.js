@@ -29,17 +29,6 @@ const MongoDBStore = require("connect-mongo");
 const { MongoClient, ObjectId } = require("mongodb");
 
 let LookupVehicle = require("lookup_vehicle");
-// const DataLoader = require('dataloader');
-// const NodeGeocoder = require('node-geocoder');
-
-// const options = {
-//   provider: 'google',
-
-//   // Optional depending on the providers
-//   fetch: customFetchImplementation,
-//   apiKey: 'AIzaSyBk-spvVNSgJWusP6KkVI-EYat2TpMJgYQ', // for Mapquest, OpenCage, Google Premier
-//   formatter: null // 'gpx', 'string', ...
-// };
 
 var config_var = {
   host: "localhost",
@@ -52,6 +41,7 @@ var config_var = {
 
 // const dbUrl = "mongodb://" + config_var.host + ":" + config_var.port;
 const dbUrl = "mongodb+srv://ccr_app:ccr_app@cluster0.vo5vzvs.mongodb.net"
+// const dbUrl = process.env.DB_URL
 
 const DB = config_var.db;
 const client = new MongoClient(dbUrl, {
@@ -59,7 +49,7 @@ const client = new MongoClient(dbUrl, {
 });
 
 try {
-  client.connect().then(() => console.log("Connected to db"));
+  client.connect().then(() => console.log("Connected to MongoDB"));
 } catch (err) {
   console.log(err);
 }
@@ -153,6 +143,7 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
+  // console.log(req.user)
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
@@ -165,50 +156,6 @@ const {
   makeExecutableSchema,
 } = require("@graphql-tools/schema");
 
-// const typeDefs = readFileSync('./schema.graphql').toString('utf-8')
-// const resolvers = require('./resolvers');
-
-async function getProductsGQ(db, keys) {
-  try {
-    // console.log(keys)
-    const docs = await db
-      .collection("player")
-      .find({ _id: { $in: keys } })
-      .toArray();
-    let out_list = [];
-    for (let i = 0; i < docs.length; i++) {
-      const player_doc = docs[i];
-      const out = await _formatPlayer(player_doc);
-      out_list.push(out);
-    }
-    // console.log(out_list)
-    keys.forEach((element, index) => {
-      keys[index] = element.toString();
-    });
-    if (out_list.length > 1) {
-      out_list.sort((a, b) => (a.name > b.name ? 1 : -1));
-    }
-    // return out_list;
-    const results = out_list.reduce((acc, row) => {
-      acc[row.pid] = row;
-      return acc;
-    }, {});
-    return keys.map(
-      (key) => results[key] || new Error(`player ${key} does not exist `)
-    );
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-// const schema = makeExecutableSchema({
-//   resolvers,
-//   resolverValidationOptions: {
-//     requireResolversForAllFields:  'warn',
-//     requireResolversToMatchSchema: 'warn'
-//   },
-//   typeDefs
-// });
 
 const graphql = require("graphql");
 const {
@@ -225,7 +172,6 @@ const {
 app.use(
   "/graphql",
   graphqlHTTP(async (req) => {
-    // console.log('graphql')
     return {
       schema: new GraphQLSchema({
         query: RootQuery,
@@ -265,11 +211,11 @@ const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
     userId: { type: GraphQLID },
-    userName: { type: GraphQLString },
+    username: { type: GraphQLString },
     account: { type: GraphQLString },
     pass: { type: GraphQLString },
-    email: { type: GraphQLString },
-    products: { type: new GraphQLList(ProductType) },
+    email: { type: GraphQLString }
+    // products: { type: new GraphQLList(ProductType) },
   }),
 });
 
@@ -312,7 +258,7 @@ const RootQuery = new GraphQLObjectType({
               $nearSphere: {
                 $geometry: { type: "Point", coordinates: args.coord },
                 $minDistance: 0,
-                $maxDistance: 5000,
+                $maxDistance: 500000,
               },
             },
           })
@@ -334,11 +280,11 @@ const RootQuery = new GraphQLObjectType({
     },
     user: {
       type: UserType,
-      args: { id: { type: GraphQLID } },
+      args: { user_id: { type: GraphQLID } },
       async resolve(parent, args) {
         const rows = await db
           .collection("users")
-          .findOne({ _id: ObjectId(args.id) });
+          .findOne({ user_id: ObjectId(args.user_id) });
         return rows;
       },
     },
@@ -369,10 +315,8 @@ app.get("/products/new", (req, res, next) => {
   res.render("add");
 });
 
-app.post(
-  "/products/new",
-  upload.array("product_photo", 5),
-  async (req, res, next) => {
+app.post("/products/new", upload.array("product_photo", 7), async (req, res, next) => {
+
     function getDatesInRange(startDate, endDate) {
       const date = new Date(startDate);
       const dates = [];
@@ -437,13 +381,19 @@ app.post(
         }
       });
     });
-    req.flash("success", "Successfully add a new product");
+    req.flash("success", "Successfully add a new car");
     res.redirect("/products/new");
   }
 );
 
 app.get("/products/new/:productId", jsonBodyParser, async (req, res, next) => {
   res.render("productDetail");
+});
+
+app.post("/products/new/:productId", jsonBodyParser, async (req, res, next) => {
+  console.log(req.params)
+  req.flash("success", "Successfully Reserved");
+  res.redirect("/products/new/" + req.params.productId);
 });
 
 app.get("/products", async (req, res, next) => {
@@ -453,6 +403,13 @@ app.get("/products", async (req, res, next) => {
 app.get("/profile", (req, res, next) => {
   res.render("profile");
 });
+
+// app.get("/logout", (req, res) => {
+//   req.logout(req.user, err => {
+//     if(err) return next(err);
+//     res.redirect("/home");
+//   });
+// });
 
 app.use("/", userRoutes);
 

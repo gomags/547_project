@@ -1,19 +1,15 @@
 const User = require('../models/user');
 const { connection_mongo, mongo_DB } = require("../database");
 
-
 module.exports.renderRegister = (req, res)=> {
     res.render('./register');
 }
 
 module.exports.register = async(req, res, next) => {
     try {
-
         const {email, username, acc_type, password} = req.body;
-        
         const user = new User({email, username});
-
-        // pass the user object and password in it and save it in db
+        
         const registerUser = await User.register(user, password);
         
         connection_mongo.connect((err,conn) => {
@@ -30,7 +26,6 @@ module.exports.register = async(req, res, next) => {
               new_user.email = email
               new_user.pass = password
               collection_user.insertOne(new_user)
-            //   console.log(collection_user)
             }
           })
 
@@ -61,8 +56,9 @@ module.exports.login = (req, res)=> {
 }
 
 module.exports.logout = (req, res) => {
-    req.logout();
-    req.flash('success', "GoodBye");
-    res.redirect('/home')
+    req.logout(req.user, err => {
+        if(err) return next(err);
+        res.redirect("/home");
+    });
 }
 

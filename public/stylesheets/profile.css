@@ -91,6 +91,11 @@ h1 {
     color: rgb(0, 176, 245);
   } */
 
+  /* my-auto */
+  .container-fluid {
+    background-color: #ffffff;
+}
+
 
 .nav-link.active {
     color: white;

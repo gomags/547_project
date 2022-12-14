@@ -1,7 +1,7 @@
 
 
 const {MongoClient, ObjectId} = require('mongodb')
-const dbUrl = "mongodb+srv://ccr_app:ccr_app@cluster0.vo5vzvs.mongodb.net"
+const dbUrl = "mongodb://localhost:27017";
 const DB = "CCR"
 // const client = new MongoClient(dbUrl, config_var.opts)
 

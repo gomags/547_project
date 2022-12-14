@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta http-equiv="Content-Security-Policy" content="default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval' 'unsafe-dynamic'; script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src * data: blob: 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src * data: blob: ; style-src * data: blob: 'unsafe-inline'; font-src * data: blob: 'unsafe-inline';">
-  <!-- Favicon -->
   <link href="/stylesheets/image/Bee.jpg" rel="shortcut icon" type="image/ico" />
   <title>Community Car Rentals</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -62,7 +61,6 @@
           <a class="nav-link" href="/profile">Profile</a>
           <a id="logout" class="nav-link" href="/logout">Logout</a>
           <% } %>
-          <!-- <a class="nav-link" href="/about">About</a> -->
         </div>
 
       </div>
@@ -88,7 +86,6 @@
             <p class="card-text"> {{productList.descript}} </p>
           </div>
           <ul class="list-group list-group-flush">
-            <!-- <li class="list-group-item text-muted">Sold by {{productList.seller.userName}} </li> -->
             <li class="list-group-item">Price: $ {{productList.price}}</li>
             <li class="list-group-item">Appearance: {{productList.look_like}}</li>
             <li class="list-group-item"> Location: {{productList.location}}</li>
@@ -96,7 +93,6 @@
             <li class="list-group-item">Type: {{productList.vehicleType}}</li>
             <li class="list-group-item">Transmission Style: {{productList.transmissionStyle}}</li>
             <li class="list-group-item">Manufacturer: {{productList.manufacturer}}</li>
-            <!-- <li class="list-group-item" id="myList"></li> -->
             <% if(currentUser) {%>
             <li class="list-group-item">
               <form :action="'/products/new/'+productList._id" method="post">

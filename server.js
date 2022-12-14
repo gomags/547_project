@@ -8,8 +8,6 @@ const express = require("express");
 
 const path = require("path");
 
-// const {connection} = require("./database");
-
 const multer = require("multer");
 const { storage } = require("./cloudinary");
 const upload = multer({ storage });
@@ -39,9 +37,7 @@ var config_var = {
     }
 };
 
-// const dbUrl = "mongodb://" + config_var.host + ":" + config_var.port;
 const dbUrl = "mongodb+srv://ccr_app:ccr_app@cluster0.vo5vzvs.mongodb.net"
-// const dbUrl = process.env.DB_URL
 
 const DB = config_var.db;
 const client = new MongoClient(dbUrl, {
@@ -61,43 +57,43 @@ client.connect((err, conn) => {
   }
 });
 
-// client.connect((err, conn) => {
-//   if (!err) {
-//     // const conn = conn;
-//     let db = conn.db(DB);
-//     db.createCollection("product", (err, res) => {
-//       if (!err) {
-//         console.log("create collection");
-//       }
-//     });
+client.connect((err, conn) => {
+  if (!err) {
+    // const conn = conn;
+    let db = conn.db(DB);
+    db.createCollection("product", (err, res) => {
+      if (!err) {
+        console.log("create collection");
+      }
+    });
 
-//     try {
-//       let collection = db.collection("product");
-//     } catch (e) {
-//       process.exit(5);
-//     }
+    try {
+      let collection = db.collection("product");
+    } catch (e) {
+      process.exit(5);
+    }
 
-//   }
-// });
+  }
+});
 
-// client.connect((err, conn) => {
-//   if (!err) {
-//     // const conn = conn;
-//     let db = conn.db(DB);
+client.connect((err, conn) => {
+  if (!err) {
+    // const conn = conn;
+    let db = conn.db(DB);
 
-//     db.createCollection("users", (err, res) => {
-//       if (!err) {
-//         console.log("create collection ");
-//       }
-//     });
+    db.createCollection("users", (err, res) => {
+      if (!err) {
+        console.log("create collection ");
+      }
+    });
 
-//     try {
-//       let collection = db.collection("users");
-//     } catch (e) {
-//       process.exit(5);
-//     }
-//   }
-// });
+    try {
+      let collection = db.collection("users");
+    } catch (e) {
+      process.exit(5);
+    }
+  }
+});
 
 const jsonBodyParser = bodyParser.json();
 
@@ -127,7 +123,6 @@ const sessionConfig = {
 };
 
 const app = express();
-// let express can use the public folder directly  https://expressjs.com/zh-tw/starter/static-files.html
 app.use(express.static("public"));
 app.set("views", path.join(__dirname, "views"));
 
@@ -143,7 +138,6 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
-  // console.log(req.user)
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
@@ -404,17 +398,8 @@ app.get("/profile", (req, res, next) => {
   res.render("profile");
 });
 
-// app.get("/logout", (req, res) => {
-//   req.logout(req.user, err => {
-//     if(err) return next(err);
-//     res.redirect("/home");
-//   });
-// });
-
 app.use("/", userRoutes);
 
-// app.listen(3000);
-// console.log("GraphQL API server running at http://localhost:3000/graphql");
 if (module === require.main) {
   const PORT = parseInt(process.env.PORT) || 8080;
   app.listen(PORT, () => {

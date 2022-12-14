@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <meta http-equiv="Content-Security-Policy" content="default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval' 'unsafe-dynamic'; script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src * data: blob: 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src * data: blob: ; style-src * data: blob: 'unsafe-inline'; font-src * data: blob: 'unsafe-inline';">
-    <!-- Favicon -->
     <link
       href="/stylesheets/image/Bee.jpg"
       rel="shortcut icon"
       type="image/ico"
     />
     <title>Community Car Rentals</title>
-    <!-- we need to careful the link CDN may change its version and cause some code cannot work properly -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -20,6 +18,7 @@
       crossorigin="anonymous"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.9/vue.js"></script>
+
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -120,11 +119,12 @@
     <% } %>
 
     <div style="overflow: hidden">
+      <!-- src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAv4KguI1bAPNkO8GVJ5UAqVag3mqCY6o4&libraries=places&signed_in=true&callback=initMap" -->
 
       <script
         async
         defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAv4KguI1bAPNkO8GVJ5UAqVag3mqCY6o4&libraries=places&signed_in=true&callback=initMap"
+        src= "https://maps.googleapis.com/maps/api/js?key=AIzaSyAv4KguI1bAPNkO8GVJ5UAqVag3mqCY6o4&libraries=places&signed_in=true&callback=initMap"
       ></script>
       <div class="search-container" id="content">
         <div class="search-results">
@@ -175,22 +175,6 @@
                 <h6 style="color: white">${{ product.price }}</h6>
               </div>
               </div>
-
-              <!-- <div
-                class="car_price"
-                style="
-                  background-color: #000000;
-                  width: 100px;
-                  height: 100px;
-                  text-align: center;
-                  padding: 25px;
-                  margin: 0px left;
-                  float: rigth;
-                "
-              >
-                <h5 style="color: white">Price</h5>
-                <h6 style="color: white">{{ product.price }}</h6>
-              </div> -->
             </div>
 
             <input type="text" id="search_latlng" name="search_latlng" hidden/>
@@ -228,21 +212,21 @@
     <script>
       const va = new Vue({
         el: "#content",
-        // export default {
         data: {
           // return {
           errorMsg: "err",
           isEditing: {},
           productList: [],
           markers: [],
+          API_KEY: null,
           map: null,
-          // }
         },
         created() {
           // this.load();
         },
         methods: {
           async getList() {
+            // this.API_KEY = process.env.KEY_API
             const ll = document.getElementById("search_latlng").value.split(":");
             const startDate_gql = document.getElementById("search_date_in").value;
             const endDate_gql = document.getElementById("search_date_out").value;
@@ -296,14 +280,13 @@
                 }
               })
               .catch(this.flash);
-
-            
           }
         }
       });
 
       // Location search
       function initMap() {
+        // this.API_KEY = process.env.KEY_API
         this.map = new google.maps.Map(document.getElementById("map"), {
           center: { lat: 34.0224, lng: -118.2851 },
           zoom: 10,
@@ -359,7 +342,6 @@
 
           var bounds = new google.maps.LatLngBounds();
           places.forEach(function (place) {
-            // document.getElementById("search_latlng").value = place.geometry.location.lng() + ":" + place.geometry.location.lat();
             var icon = {
               url: place.icon,
               size: new google.maps.Size(71, 71),
@@ -369,7 +351,6 @@
             };
 
             console.log(place.geometry.location)
-            // markers.push(
               new google.maps.Marker({
                 map:  map,
                 icon: icon,
@@ -377,7 +358,6 @@
                 position: place.geometry.location,
                 animation: google.maps.Animation.DROP,
               })
-            // );
 
             if (place.geometry.viewport) {
               bounds.union(place.geometry.viewport);
@@ -402,7 +382,6 @@
         );
       }
       window.initMap = initMap;
-      // Input Date & time
       var search_cars = document.getElementById("search_cars");
       search_cars.addEventListener("click", function () {
 

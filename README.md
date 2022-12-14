@@ -1,8 +1,9 @@
 # Community Car Rentals
 
-> Developed a web application, deployed on GCP using gcloud cli, Node.js Express, Vue.js, GraphQL, MongoDB Atlas, Cloudinary.
+> Developed a web application for renting cars in your community, deployed on GCP using gcloud cli, Node.js Express, Vue.js, GraphQL, MongoDB Atlas, Cloudinary.
 <p align="center"><img src="READMEIMG/Home.png" width="500" /></p>
 
+<a href = https://divine-axis-370207.ue.r.appspot.com/home /> See the application in action here</a>
 
 ### 1. MongoDB database
 Install MongoDB
